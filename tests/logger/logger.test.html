@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>logger</title>
+    <link rel="stylesheet" href="../../node_modules/gruntmodule-qunit/lib/qunit/qunit.css"/>
+</head>
+<body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture">
+        <!-- HTML to test goes here -->
+    </div>
+
+    <script src="../../node_modules/gruntmodule-qunit/lib/qunit/qunit.js"></script>
+    <script src="../../node_modules/gruntmodule-qunit/helpers/browserify.js"></script>
+    <script>
+        // mockup of modules goes here
+        var consoleLogs,
+            resetConsoleLogs = function () {
+                consoleLogs = {
+                    debug: null,
+                    log: null,
+                    info: null,
+                    warn: null,
+                    error: null
+                };
+            };
+
+        var consoleBackup = {
+            debug: console.debug,
+            log: console.log,
+            info: console.info,
+            warn: console.warn,
+            error: console.error
+        };
+
+        var restoreConsole = function () {
+            console.debug = consoleBackup.debug;
+            console.log = consoleBackup.log;
+            console.info = consoleBackup.info;
+            console.warn = consoleBackup.warn;
+            console.error = consoleBackup.error;
+        };
+
+        var changeConsole = function () {
+            console.debug = function () {
+                consoleLogs.debug = arguments;
+            };
+            console.log = function () {
+                consoleLogs.log = arguments;
+            };
+            console.info = function () {
+                consoleLogs.info = arguments;
+            };
+            console.warn = function () {
+                consoleLogs.warn = arguments;
+            };
+            console.error = function () {
+                consoleLogs.error = arguments;
+            };
+        };
+
+        // define the require function and register the mockups by path
+        var require = defineRequire({
+            'json3': JSON
+        });
+
+        // define export variables
+        defineExports();
+    </script>
+
+    <!-- Import the script to be tested -->
+    <script src="../../src/javascripts/logger/logger.js"></script>
+
+    <script>
+        // restore the browserify variables' original value
+        restoreExports();
+    </script>
+
+    <script>
+        // define modules and tests
+        module("enable-disable", {
+            setup: function () {
+                resetConsoleLogs();
+                changeConsole();
+            },
+            teardown: function () {
+                restoreConsole();
+            }
+        });
+
+        test("enable", function () {
+            nodeExports.enable();
+
+            var obj1 = {};
+            var obj2 = {};
+
+            nodeExports.error(obj1, obj2);
+            equal(consoleLogs.error[0], obj1, "Console called with correct parameter.");
+            equal(consoleLogs.error[1], obj2, "Console called with correct parameter.");
+        });
+
+        test("disable", function () {
+            nodeExports.disable();
+
+            var obj1 = {};
+            var obj2 = {};
+
+            nodeExports.error(obj1, obj2);
+            equal(consoleLogs.error, null, "Console not called.");
+        });
+
+
+        module("levels", {
+            setup: function () {
+                resetConsoleLogs();
+                changeConsole();
+            },
+            teardown: function () {
+                restoreConsole();
+            }
+        });
+
+        test("setLevel - 4", function () {
+            nodeExports.enable();
+
+            var obj1 = {};
+            var obj2 = {};
+
+            nodeExports.setLevel(4);
+
+            nodeExports.debug(obj1, obj2);
+            equal(consoleLogs.debug, null, "Debug not called.");
+
+            nodeExports.log(obj1, obj2);
+            equal(consoleLogs.log, null, "Log not called.");
+
+            nodeExports.info(obj1, obj2);
+            equal(consoleLogs.info, null, "Info not called.");
+
+            nodeExports.warn(obj1, obj2);
+            equal(consoleLogs.warn, null, "Warn not called.");
+
+            nodeExports.error(obj1, obj2);
+            equal(consoleLogs.error[0], obj1, "Error called with correct parameter.");
+            equal(consoleLogs.error[1], obj2, "Error called with correct parameter.");
+        });
+
+
+        test("setLevel - 3", function () {
+            nodeExports.enable();
+
+            var obj1 = {};
+            var obj2 = {};
+
+            nodeExports.setLevel(3);
+
+            nodeExports.debug(obj1, obj2);
+            equal(consoleLogs.debug, null, "Debug not called.");
+
+            nodeExports.log(obj1, obj2);
+            equal(consoleLogs.log, null, "Log not called.");
+
+            nodeExports.info(obj1, obj2);
+            equal(consoleLogs.info, null, "Info not called.");
+
+            nodeExports.warn(obj1, obj2);
+            equal(consoleLogs.warn[0], obj1, "Warn called with correct parameter.");
+            equal(consoleLogs.warn[1], obj2, "Warn called with correct parameter.");
+
+            nodeExports.error(obj1, obj2);
+            equal(consoleLogs.error[0], obj1, "Error called with correct parameter.");
+            equal(consoleLogs.error[1], obj2, "Error called with correct parameter.");
+        });
+
+        test("setLevel - 2", function () {
+            nodeExports.enable();
+
+            var obj1 = {};
+            var obj2 = {};
+
+            nodeExports.setLevel(2);
+
+            nodeExports.debug(obj1, obj2);
+            equal(consoleLogs.debug, null, "Debug not called.");
+
+            nodeExports.log(obj1, obj2);
+            equal(consoleLogs.log, null, "Log not called.");
+
+            nodeExports.info(obj1, obj2);
+            equal(consoleLogs.info[0], obj1, "Info called with correct parameter.");
+            equal(consoleLogs.info[1], obj2, "Info called with correct parameter.");
+
+            nodeExports.warn(obj1, obj2);
+            equal(consoleLogs.warn[0], obj1, "Warn called with correct parameter.");
+            equal(consoleLogs.warn[1], obj2, "Warn called with correct parameter.");
+
+            nodeExports.error(obj1, obj2);
+            equal(consoleLogs.error[0], obj1, "Error called with correct parameter.");
+            equal(consoleLogs.error[1], obj2, "Error called with correct parameter.");
+        });
+
+        test("setLevel - 1", function () {
+            nodeExports.enable();
+
+            var obj1 = {};
+            var obj2 = {};
+
+            nodeExports.setLevel(1);
+
+            nodeExports.debug(obj1, obj2);
+            equal(consoleLogs.debug, null, "Debug not called.");
+
+            nodeExports.log(obj1, obj2);
+            equal(consoleLogs.log[0], obj1, "Log called with correct parameter.");
+            equal(consoleLogs.log[1], obj2, "Log called with correct parameter.");
+
+            nodeExports.info(obj1, obj2);
+            equal(consoleLogs.info[0], obj1, "Info called with correct parameter.");
+            equal(consoleLogs.info[1], obj2, "Info called with correct parameter.");
+
+            nodeExports.warn(obj1, obj2);
+            equal(consoleLogs.warn[0], obj1, "Warn called with correct parameter.");
+            equal(consoleLogs.warn[1], obj2, "Warn called with correct parameter.");
+
+            nodeExports.error(obj1, obj2);
+            equal(consoleLogs.error[0], obj1, "Error called with correct parameter.");
+            equal(consoleLogs.error[1], obj2, "Error called with correct parameter.");
+        });
+
+        test("setLevel - 0", function () {
+            nodeExports.enable();
+
+            var obj1 = {};
+            var obj2 = {};
+
+            nodeExports.setLevel(0);
+
+            nodeExports.debug(obj1, obj2);
+            equal(consoleLogs.debug[0], obj1, "Debug called with correct parameter.");
+            equal(consoleLogs.debug[1], obj2, "Debug called with correct parameter.");
+
+            nodeExports.log(obj1, obj2);
+            equal(consoleLogs.log[0], obj1, "Log called with correct parameter.");
+            equal(consoleLogs.log[1], obj2, "Log called with correct parameter.");
+
+            nodeExports.info(obj1, obj2);
+            equal(consoleLogs.info[0], obj1, "Info called with correct parameter.");
+            equal(consoleLogs.info[1], obj2, "Info called with correct parameter.");
+
+            nodeExports.warn(obj1, obj2);
+            equal(consoleLogs.warn[0], obj1, "Warn called with correct parameter.");
+            equal(consoleLogs.warn[1], obj2, "Warn called with correct parameter.");
+
+            nodeExports.error(obj1, obj2);
+            equal(consoleLogs.error[0], obj1, "Error called with correct parameter.");
+            equal(consoleLogs.error[1], obj2, "Error called with correct parameter.");
+        });
+
+
+
+        test("setLevel - error", function () {
+            nodeExports.enable();
+
+            var obj1 = {};
+            var obj2 = {};
+
+            nodeExports.setLevel("error");
+
+            nodeExports.debug(obj1, obj2);
+            equal(consoleLogs.debug, null, "Debug not called.");
+
+            nodeExports.log(obj1, obj2);
+            equal(consoleLogs.log, null, "Log not called.");
+
+            nodeExports.info(obj1, obj2);
+            equal(consoleLogs.info, null, "Info not called.");
+
+            nodeExports.warn(obj1, obj2);
+            equal(consoleLogs.warn, null, "Warn not called.");
+
+            nodeExports.error(obj1, obj2);
+            equal(consoleLogs.error[0], obj1, "Error called with correct parameter.");
+            equal(consoleLogs.error[1], obj2, "Error called with correct parameter.");
+        });
+
+
+        test("setLevel - warn", function () {
+            nodeExports.enable();
+
+            var obj1 = {};
+            var obj2 = {};
+
+            nodeExports.setLevel("warn");
+
+            nodeExports.debug(obj1, obj2);
+            equal(consoleLogs.debug, null, "Debug not called.");
+
+            nodeExports.log(obj1, obj2);
+            equal(consoleLogs.log, null, "Log not called.");
+
+            nodeExports.info(obj1, obj2);
+            equal(consoleLogs.info, null, "Info not called.");
+
+            nodeExports.warn(obj1, obj2);
+            equal(consoleLogs.warn[0], obj1, "Warn called with correct parameter.");
+            equal(consoleLogs.warn[1], obj2, "Warn called with correct parameter.");
+
+            nodeExports.error(obj1, obj2);
+            equal(consoleLogs.error[0], obj1, "Error called with correct parameter.");
+            equal(consoleLogs.error[1], obj2, "Error called with correct parameter.");
+        });
+
+        test("setLevel - info", function () {
+            nodeExports.enable();
+
+            var obj1 = {};
+            var obj2 = {};
+
+            nodeExports.setLevel("info");
+
+            nodeExports.debug(obj1, obj2);
+            equal(consoleLogs.debug, null, "Debug not called.");
+
+            nodeExports.log(obj1, obj2);
+            equal(consoleLogs.log, null, "Log not called.");
+
+            nodeExports.info(obj1, obj2);
+            equal(consoleLogs.info[0], obj1, "Info called with correct parameter.");
+            equal(consoleLogs.info[1], obj2, "Info called with correct parameter.");
+
+            nodeExports.warn(obj1, obj2);
+            equal(consoleLogs.warn[0], obj1, "Warn called with correct parameter.");
+            equal(consoleLogs.warn[1], obj2, "Warn called with correct parameter.");
+
+            nodeExports.error(obj1, obj2);
+            equal(consoleLogs.error[0], obj1, "Error called with correct parameter.");
+            equal(consoleLogs.error[1], obj2, "Error called with correct parameter.");
+        });
+
+        test("setLevel - log", function () {
+            nodeExports.enable();
+
+            var obj1 = {};
+            var obj2 = {};
+
+            nodeExports.setLevel("log");
+
+            nodeExports.debug(obj1, obj2);
+            equal(consoleLogs.debug, null, "Debug not called.");
+
+            nodeExports.log(obj1, obj2);
+            equal(consoleLogs.log[0], obj1, "Log called with correct parameter.");
+            equal(consoleLogs.log[1], obj2, "Log called with correct parameter.");
+
+            nodeExports.info(obj1, obj2);
+            equal(consoleLogs.info[0], obj1, "Info called with correct parameter.");
+            equal(consoleLogs.info[1], obj2, "Info called with correct parameter.");
+
+            nodeExports.warn(obj1, obj2);
+            equal(consoleLogs.warn[0], obj1, "Warn called with correct parameter.");
+            equal(consoleLogs.warn[1], obj2, "Warn called with correct parameter.");
+
+            nodeExports.error(obj1, obj2);
+            equal(consoleLogs.error[0], obj1, "Error called with correct parameter.");
+            equal(consoleLogs.error[1], obj2, "Error called with correct parameter.");
+        });
+
+        test("setLevel - debug", function () {
+            nodeExports.enable();
+
+            var obj1 = {};
+            var obj2 = {};
+
+            nodeExports.setLevel("debug");
+
+            nodeExports.debug(obj1, obj2);
+            equal(consoleLogs.debug[0], obj1, "Debug called with correct parameter.");
+            equal(consoleLogs.debug[1], obj2, "Debug called with correct parameter.");
+
+            nodeExports.log(obj1, obj2);
+            equal(consoleLogs.log[0], obj1, "Log called with correct parameter.");
+            equal(consoleLogs.log[1], obj2, "Log called with correct parameter.");
+
+            nodeExports.info(obj1, obj2);
+            equal(consoleLogs.info[0], obj1, "Info called with correct parameter.");
+            equal(consoleLogs.info[1], obj2, "Info called with correct parameter.");
+
+            nodeExports.warn(obj1, obj2);
+            equal(consoleLogs.warn[0], obj1, "Warn called with correct parameter.");
+            equal(consoleLogs.warn[1], obj2, "Warn called with correct parameter.");
+
+            nodeExports.error(obj1, obj2);
+            equal(consoleLogs.error[0], obj1, "Error called with correct parameter.");
+            equal(consoleLogs.error[1], obj2, "Error called with correct parameter.");
+        });
+
+
+
+        module("edge cases", {
+            setup: function () {
+                resetConsoleLogs();
+                changeConsole();
+                nodeExports.enable();
+            },
+            teardown: function () {
+                restoreConsole();
+            }
+        });
+
+        test("level out of range", function () {
+            var errorThrown = false;
+            try {
+                nodeExports.setLevel(5);
+            } catch (e) {
+                errorThrown = true;
+            }
+            ok(errorThrown, "5 out of range error.");
+
+
+            errorThrown = false;
+            try {
+                nodeExports.setLevel(-1);
+            } catch (e) {
+                errorThrown = true;
+            }
+            ok(errorThrown, "-1 out of range error.");
+
+
+            errorThrown = false;
+            try {
+                nodeExports.setLevel("asd");
+            } catch (e) {
+                errorThrown = true;
+            }
+            ok(errorThrown, "'asd' not a level error.");
+        });
+
+        test("only console.log is available", function () {
+            console.debug = undefined;
+            nodeExports.setLevel(0);
+
+            var obj1 = {};
+            var obj2 = [1, 2, 3];
+
+            var errorThrown = false;
+
+            nodeExports.debug(obj1, obj2);
+
+            equal(consoleLogs.log[0], "{} [1,2,3]", "Fallback to console.log with data serialization, called with correct parameter.");
+        });
+    </script>
+</body>
+</html>

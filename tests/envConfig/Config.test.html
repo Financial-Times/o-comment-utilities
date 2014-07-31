@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Config</title>
+    <link rel="stylesheet" href="../../node_modules/gruntmodule-qunit/lib/qunit/qunit.css"/>
+</head>
+<body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture">
+        <!-- HTML to test goes here -->
+    </div>
+
+    <script src="../../node_modules/gruntmodule-qunit/lib/qunit/qunit.js"></script>
+    <script src="../../node_modules/gruntmodule-qunit/helpers/browserify.js"></script>
+    <script>
+        // mockup of modules goes here
+        var mergeMockupLog,
+            resetMergeMockupLog = function () {
+                mergeMockupLog = null;
+            },
+            mergeMockup = function () {
+                mergeMockupLog = arguments;
+                return arguments[1];
+            };
+
+        var config;
+
+        // define the require function and register the mockups by path
+        var require = defineRequire({
+            'js-merge': mergeMockup
+        });
+
+        // define export variables
+        defineExports();
+    </script>
+
+    <!-- Import the script to be tested -->
+    <script src="../../src/javascripts/envConfig/Config.js"></script>
+
+    <script>
+        // restore the browserify variables' original value
+        restoreExports();
+    </script>
+
+    <script>
+        // define modules and tests
+        module("set", {
+            setup: function () {
+                resetMergeMockupLog();
+
+                config = new nodeModule.exports();
+            },
+            teardown: function () {
+                
+            }
+        });
+
+        test("key-value", function () {
+            var value = {
+                "valueKey": "valueValue"
+            };
+            config.set("configKey", value);
+
+            ok(mergeMockupLog !== null, "New config is merged with the old config.");
+            deepEqual(mergeMockupLog[0], {}, "By default config is empty.");
+            deepEqual(mergeMockupLog[1], {
+                "configKey": value
+            }, "Correct config is merged with the original config.");
+
+            resetMergeMockupLog();
+
+            config.set("someKey1", "someValue1");
+
+            deepEqual(mergeMockupLog[0], {
+                "configKey": value
+            }, "Earlier merge saved as the new config.");
+        });
+
+        test("object", function () {
+            var value = {
+                "valueKey": "valueValue"
+            };
+            config.set(value);
+
+            ok(mergeMockupLog !== null, "New config is merged with the old config.");
+            deepEqual(mergeMockupLog[0], {}, "By default config is empty.");
+            deepEqual(mergeMockupLog[1], value, "Correct config is merged with the original config.");
+
+            resetMergeMockupLog();
+
+            config.set({"someKey1": "someValue1"});
+
+            deepEqual(mergeMockupLog[0], value, "Earlier merge saved as the new config.");
+        });
+
+        module("get", {
+            setup: function () {
+                resetMergeMockupLog();
+
+                config = new nodeModule.exports();
+            },
+            teardown: function () {
+                
+            }
+        });
+
+        test("a field", function () {
+            var value = {
+                "key1": "value1",
+                "key2": "value2",
+                "key3": "value3"
+            };
+            config.set(value);
+
+            equal(config.get("key1"), value["key1"], "Correct value returned.");
+        });
+
+        test("all", function () {
+            var value = {
+                "key1": "value1",
+                "key2": "value2",
+                "key3": "value3"
+            };
+            config.set(value);
+
+            deepEqual(config.get(), value, "The whole config object returned correctly.");
+        });
+    </script>
+</body>
+</html>

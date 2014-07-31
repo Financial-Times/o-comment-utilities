@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>jsonp</title>
+    <link rel="stylesheet" href="../../node_modules/gruntmodule-qunit/lib/qunit/qunit.css"/>
+</head>
+<body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture">
+        <!-- HTML to test goes here -->
+    </div>
+
+    <script src="../../node_modules/gruntmodule-qunit/lib/qunit/qunit.js"></script>
+    <script src="../../node_modules/gruntmodule-qunit/helpers/browserify.js"></script>
+    <script>
+        // mockup of modules goes here
+        var scriptLoaderMockupLog,
+            resetScriptLoaderMockupLog = function () {
+                scriptLoaderMockupLog = null;
+            },
+            scriptLoaderMockup = function () {
+                scriptLoaderMockupLog = arguments;
+            };
+
+        var paramMockupLog,
+            resetParamMockupLog = function () {
+                paramMockupLog = null;
+            },
+            paramMockup = function () {
+                paramMockupLog = arguments;
+
+                return "paramSerialized";
+            };
+
+        // define the require function and register the mockups by path
+        var require = defineRequire({
+            '../scriptLoader/scriptLoader.js': scriptLoaderMockup,
+            './param.js': paramMockup
+        });
+
+        // define export variables
+        defineExports();
+    </script>
+
+    <!-- Import the script to be tested -->
+    <script src="../../src/javascripts/jsonp/jsonp.js"></script>
+
+    <script>
+        // restore the browserify variables' original value
+        restoreExports();
+    </script>
+
+    <script>
+        // define modules and tests
+        
+        module("parameter validation", {
+            setup: function () {
+                resetParamMockupLog();
+                resetScriptLoaderMockupLog();
+            },
+            teardown: function () {
+                
+            }
+        });
+
+
+        test("no callback", function () {
+            var options = {
+                url: "http://test.url.com/test.js",
+                charset: "utf8"
+            };
+            var errorThrown = false;
+
+            try {
+                nodeModule.exports(options);
+            } catch (e) {
+                errorThrown = true;
+            }
+
+            ok(errorThrown, "Error thrown.");
+        });
+
+        test("no options", function () {
+            var errorThrown = null;
+
+            nodeModule.exports(undefined, function (err) {
+                errorThrown = err;
+            });
+
+            ok(errorThrown !== null, "Error thrown.");
+        });
+
+        test("no url", function () {
+            var options = {
+                charset: "UTF-8"
+            };
+            var errorThrown = null;
+
+            nodeModule.exports(options, function (err) {
+                errorThrown = err;
+            });
+
+            ok(errorThrown !== null, "Error thrown.");
+        });
+
+
+
+        module("setup", {
+            setup: function () {
+                resetParamMockupLog();
+                resetScriptLoaderMockupLog();
+            },
+            teardown: function () {
+                // teardown code
+            }
+        });
+
+        test("object parameter", function () {
+            var url = "http://test.url.com/test.js";
+            var options = {
+                url: url,
+                data: {
+                    "key1": "value1",
+                    "key2": "value2"
+                },
+                charset: "UTF-8"
+            };
+            nodeModule.exports(options, function (err) {
+
+            });
+
+            equal(paramMockupLog[0], options.data, "Parameters are used correctly.");
+            ok(scriptLoaderMockupLog[0].url.match(/http:\/\/test\.url\.com\/test\.js\?paramSerialized\&callback=([^\&\=]+)\&_=([^\&\=]+)/) !== null, "Url correctly built.");
+            ok(typeof window[scriptLoaderMockupLog[0].url.match(/http:\/\/test\.url\.com\/test\.js\?paramSerialized\&callback=([^\&\=]+)\&_=([^\&\=]+)/)[1]] === 'function', "Callback function created.");
+        });
+
+        test("no data", function () {
+            var url = "http://test.url.com/test.js";
+            var options = {
+                url: url
+            };
+            nodeModule.exports(options, function (err) {
+
+            });
+
+            ok(scriptLoaderMockupLog[0].url.match(/http:\/\/test\.url\.com\/test\.js\?callback=([^\&\=]+)\&_=([^\&\=]+)/) !== null, "Url correctly built.");
+            ok(typeof window[scriptLoaderMockupLog[0].url.match(/http:\/\/test\.url\.com\/test\.js\?callback=([^\&\=]+)\&_=([^\&\=]+)/)[1]] === 'function', "Callback function created.");
+        });
+
+
+
+        module("loading", {
+            setup: function () {
+                resetParamMockupLog();
+                resetScriptLoaderMockupLog();
+            },
+            teardown: function () {
+                
+            }
+        });
+
+        test("error", function () {
+            var url = "http://test.url.com/test.js";
+            var options = {
+                url: url,
+                data: {
+                    "key1": "value1",
+                    "key2": "value2"
+                },
+                charset: "UTF-8"
+            };
+            var errorThrown = null;
+            var errorToBeThrown = new Error("error");
+
+            nodeModule.exports(options, function (err) {
+                errorThrown = err;
+            });
+
+
+            scriptLoaderMockupLog[1](errorToBeThrown);
+
+            equal(errorThrown, errorToBeThrown, "Error thrown.");
+        });
+
+        asyncTest("call success - callback not called", function () {
+            var url = "http://test.url.com/test.js";
+            var options = {
+                url: url,
+                data: {
+                    "key1": "value1",
+                    "key2": "value2"
+                },
+                charset: "UTF-8"
+            };
+            var success = false;
+            var errorThrown = false;
+
+            nodeModule.exports(options, function (err) {
+                if (err) {
+                    errorThrown = true;
+                    return;
+                }
+
+                success = true;
+            });
+
+            scriptLoaderMockupLog[1]();
+            
+            setTimeout(function () {
+                equal(success, false, "As jsonp callback not called .");
+                equal(errorThrown, true, "Error thrown.");
+
+                start();
+            }, 300);
+        });
+
+
+        test("success", function () {
+            var url = "http://test.url.com/test.js";
+            var options = {
+                url: url,
+                data: {
+                    "key1": "value1",
+                    "key2": "value2"
+                },
+                charset: "UTF-8"
+            };
+            var success = false;
+            var successData = null;
+            var errorThrown = false;
+
+            nodeModule.exports(options, function (err, data) {
+                if (err) {
+                    errorThrown = true;
+                    return;
+                }
+
+                success = true;
+                successData = data;
+            });
+
+            
+            var jsonpCallbackName = scriptLoaderMockupLog[0].url.match(/http:\/\/test\.url\.com\/test\.js\?paramSerialized\&callback=([^\&\=]+)\&_=([^\&\=]+)/)[1];
+            var jsonpData = {
+                "jsonpkey1": "jsonpvalue1",
+                "jsonpkey2": "jsonpvalue2"
+            };
+            window[jsonpCallbackName](jsonpData);
+            scriptLoaderMockupLog[1]();
+
+            equal(success, true, "Success true.");
+            deepEqual(successData, jsonpData, "Correct data received back.");
+            equal(errorThrown, false, "Error not thrown.");
+        });
+    </script>
+</body>
+</html>

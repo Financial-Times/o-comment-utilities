@@ -1,0 +1,13 @@
+{
+  "name": "comment-utilities",
+  "version": "0.1.0",
+  "main": "main.js",
+  "dependencies": {
+    "js-merge": "git+http://git.svc.ft.com:8080/scm/strat_p/js-merge.git#^0.1.0"
+  },
+  "ignore": [
+    "node_modules",
+    "tests",
+    "Gruntfile.js"
+  ]
+}

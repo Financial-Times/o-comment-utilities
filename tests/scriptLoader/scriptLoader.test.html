@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>scriptLoader</title>
+    <link rel="stylesheet" href="../../node_modules/gruntmodule-qunit/lib/qunit/qunit.css"/>
+</head>
+<body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture">
+        <!-- HTML to test goes here -->
+    </div>
+
+    <script src="../../node_modules/gruntmodule-qunit/lib/qunit/qunit.js"></script>
+    <script src="../../node_modules/gruntmodule-qunit/helpers/browserify.js"></script>
+    <script>
+        // mockup of modules goes here
+        var createElementBackup,
+            createElementLog,
+            restoreCreateElement = function () {
+                document.createElement = createElementBackup;
+            },
+            changeCreateElement = function () {
+                resetCreateElementLog();
+
+                createElementBackup = document.createElement;
+                document.createElement = function (element) {
+                    createElementLog.elementToCreate = element;
+                    createElementLog.elementCreated = createElementBackup.call(document, element);
+                    return createElementLog.elementCreated;
+                };
+            },
+            resetCreateElementLog = function () {
+                createElementLog= {};
+            };
+
+        // define the require function and register the mockups by path
+        var require = defineRequire({
+        });
+
+        // define export variables
+        defineExports();
+    </script>
+
+    <!-- Import the script to be tested -->
+    <script src="../../src/javascripts/scriptLoader/scriptLoader.js"></script>
+
+    <script>
+        // restore the browserify variables' original value
+        restoreExports();
+    </script>
+
+    <script>
+        // define modules and tests
+        module("parameter validation", {
+            setup: function () {
+                resetCreateElementLog();
+            },
+            teardown: function () {
+                
+            }
+        });
+
+
+        test("no callback", function () {
+            var options = {
+                url: "http://test.url.com/test.js",
+                charset: "utf8"
+            };
+            var errorThrown = false;
+
+            try {
+                nodeModule.exports(options);
+            } catch (e) {
+                errorThrown = true;
+            }
+
+            ok(errorThrown, "Error thrown.");
+        });
+
+        test("no options", function () {
+            var errorThrown = null;
+
+            nodeModule.exports(undefined, function (err) {
+                errorThrown = err;
+            });
+
+            ok(errorThrown !== null, "Error thrown.");
+        });
+
+        test("no url", function () {
+            var options = {
+                charset: "UTF-8"
+            };
+            var errorThrown = null;
+
+            nodeModule.exports(options, function (err) {
+                errorThrown = err;
+            });
+
+            ok(errorThrown !== null, "Error thrown.");
+        });
+
+
+
+
+        module("setup", {
+            setup: function () {
+                resetCreateElementLog();
+                changeCreateElement();
+            },
+            teardown: function () {
+                restoreCreateElement();
+            }
+        });
+
+        test("object parameter", function () {
+            var options = {
+                url: "http://test.url.com/test.js",
+                charset: "UTF-8"
+            };
+            nodeModule.exports(options, function (err) {
+
+            });
+
+            equal(createElementLog.elementToCreate, "script", "Script element created.");
+            equal(createElementLog.elementCreated.async, true, "Async loading enabled.");
+            equal(createElementLog.elementCreated.src, options.url, "Correct URL is used.");
+            equal(createElementLog.elementCreated.charset, options.charset, "Charset is correctly set.");
+        });
+
+        test("url parameter", function () {
+            var url = "http://test.url.com/test.js";
+            nodeModule.exports(url, function (err) {
+
+            });
+
+            equal(createElementLog.elementToCreate, "script", "Script element created.");
+            equal(createElementLog.elementCreated.async, true, "Async loading enabled.");
+            equal(createElementLog.elementCreated.src, url, "Correct URL is used.");
+        });
+
+
+
+        module("loading", {
+            setup: function () {
+                resetCreateElementLog();
+                changeCreateElement();
+            },
+            teardown: function () {
+                restoreCreateElement();
+            }
+        });
+
+        test("error", function () {
+            var url = "http://test.url.com/test.js";
+            var errorThrown = null;
+            var errorToBeThrown = new Error("error");
+
+            nodeModule.exports(url, function (err) {
+                errorThrown = err;
+            });
+
+            createElementLog.elementCreated.onerror(errorToBeThrown);
+            equal(errorThrown, errorToBeThrown, "Error thrown.");
+        });
+
+        test("success - IE", function () {
+            var url = "http://test.url.com/test.js";
+            var success = false;
+
+            nodeModule.exports(url, function (err) {
+                if (err) {
+                    return;
+                }
+
+                success = true;
+            });
+
+            createElementLog.elementCreated.readyState = "loading";
+            createElementLog.elementCreated.onreadystatechange();
+            equal(success, false, "Callback not called yet.");
+
+            createElementLog.elementCreated.readyState = "loaded";
+            createElementLog.elementCreated.onreadystatechange();
+            equal(success, true, "Callback called.");
+        });
+
+        test("success - modern browsers", function () {
+            var url = "http://test.url.com/test.js";
+            var success = false;
+
+            nodeModule.exports(url, function (err) {
+                if (err) {
+                    return;
+                }
+
+                success = true;
+            });
+
+            createElementLog.elementCreated.onload();
+            equal(success, true, "Callback called.");
+        });
+
+        test("one single callback called", function () {
+            var url = "http://test.url.com/test.js";
+            var errorThrown = null;
+            var success = false;
+            var errorToBeThrown = new Error("error");
+
+            nodeModule.exports(url, function (err) {
+                if (err) {
+                    errorThrown = err;
+                    return;
+                }
+
+                success = true;
+            });
+
+            createElementLog.elementCreated.onerror(errorToBeThrown);
+            equal(errorThrown, errorToBeThrown, "Error thrown.");
+
+            equal(createElementLog.elementCreated.onload, null, "Script destroyed.");
+        });
+    </script>
+</body>
+</html>

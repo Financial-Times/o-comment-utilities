@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>StorageWrapper</title>
+    <link rel="stylesheet" href="../../node_modules/gruntmodule-qunit/lib/qunit/qunit.css"/>
+</head>
+<body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture">
+        <!-- HTML to test goes here -->
+    </div>
+
+    <script src="../../node_modules/gruntmodule-qunit/lib/qunit/qunit.js"></script>
+    <script src="../../node_modules/gruntmodule-qunit/helpers/browserify.js"></script>
+    <script>
+        // mockup of modules goes here
+        var lastStorageSet,
+            lastStorageOperation,
+            forcedValueReturn,
+
+            sessionStorageMockup = (function () {
+                return {
+                    setItem: function (key, value) {
+                        lastStorageSet = {
+                            key: key,
+                            value: value
+                        };
+                        lastStorageOperation = "set";
+                    },
+                    getItem: function (key) {
+                        lastStorageOperation = "get";
+                        if (typeof forcedValueReturn !== "undefined") {
+                            return forcedValueReturn;
+                        } else {
+                            return key + "-value";
+                        }
+                    },
+                    removeItem: function (key) {
+                        lastStorageOperation = "remove";
+                        lastStorageSet = {
+                            key: key
+                        };
+                    },
+                    clear: function () {
+                        lastStorageOperation = "clear";
+                    }
+                }
+            })();
+
+        var currentStorage;
+
+        function restoreStorageMockup() {
+            lastStorageSet = lastStorageOperation = forcedValueReturn = undefined;
+        }
+
+        if (typeof Storage !== "undefined") {
+            var sessionStorageBackup = window.sessionStorage;
+            var localStorageBackup = window.localStorage;
+        }
+
+        // define the require function and register the mockups by path
+        var require = defineRequire({
+            'json3': JSON
+        });
+
+        // define export variables
+        defineExports();
+    </script>
+
+    <!-- Import the script to be tested -->
+    <script src="../../src/javascripts/storageWrapper/StorageWrapper.js"></script>
+
+    <script>
+        // restore the browserify variables' original value
+        restoreExports();
+    </script>
+
+    <script>
+        // define modules and tests
+        if (typeof(Storage) !== "undefined") {
+            try {
+                Object.defineProperty(window, 'sessionStorage', { value: sessionStorageMockup });
+                
+                if (window.sessionStorage === sessionStorageMockup) {
+                    window.sessionStorage = sessionStorageBackup;
+                    Object.defineProperty(window, 'sessionStorage', { value: sessionStorageBackup });
+
+
+                    var sessionStorageCalled,
+                        localStorageCalled;
+
+                    module( "storage available - storage type", {
+                        setup: function() {
+                            var sessionMockup = {
+                                    setItem: function (key, value) {
+                                        sessionStorageCalled = true;
+                                    }
+                                };
+
+                            window.sessionStorage = sessionMockup;
+                            Object.defineProperty(window, 'sessionStorage', { value: sessionMockup });
+
+
+                            var localMockup = {
+                                    setItem: function (key, value) {
+                                        localStorageCalled = true;
+                                    }
+                                };
+
+                            window.localStorage = localMockup;
+                            Object.defineProperty(window, 'localStorage', { value: localMockup });
+
+
+                            sessionStorageCalled = false;
+                            localStorageCalled = false;
+                        }, teardown: function() {
+                            window.sessionStorage = sessionStorageBackup;
+                            Object.defineProperty(window, 'sessionStorage', { value: sessionStorageBackup });
+
+                            window.localStorage = localStorageBackup;
+                            Object.defineProperty(window, 'localStorage', { value: localStorageBackup });
+                        }
+                    });
+
+                    test("session", function () {
+                        var storageInstance = new nodeModule.exports("session");
+                        
+                        storageInstance.setItem("key", "value");
+
+                        ok(sessionStorageCalled, "Session storage is used.");
+                        ok(!localStorageCalled, "Local storage is not used.");
+                    });
+
+                    test("sessionStorage", function () {
+                        var storageInstance = new nodeModule.exports("sessionStorage");
+
+                        storageInstance.setItem();
+
+                        ok(sessionStorageCalled, "Session storage is used.");
+                        ok(!localStorageCalled, "Local storage is not used.");
+                    });
+
+                    test("local", function () {
+                        var storageInstance = new nodeModule.exports("local");
+
+                        storageInstance.setItem();
+
+                        ok(localStorageCalled, "Local storage is used.");
+                        ok(!sessionStorageCalled, "Session storage is not used.");
+                    });
+
+                    test("localStorage", function () {
+                        var storageInstance = new nodeModule.exports("localStorage");
+
+                        storageInstance.setItem();
+
+                        ok(localStorageCalled, "local storage is used.");
+                        ok(!sessionStorageCalled, "Session storage is not used.");
+                    });
+
+
+
+                    module( "storage available - functionality", {
+                        setup: function() {
+                            window.sessionStorage = sessionStorageMockup;
+                            Object.defineProperty(window, 'sessionStorage', { value: sessionStorageMockup });
+
+                            restoreStorageMockup();
+
+                            currentStorage = new nodeModule.exports("session");
+                        }, teardown: function() {
+                            window.sessionStorage = sessionStorageBackup;
+                            Object.defineProperty(window, 'sessionStorage', { value: sessionStorageBackup });
+                        }
+                    });
+
+                    test( "setItem", function () {
+                        currentStorage.setItem('keySet', 'valueSet');
+
+                        equal(lastStorageOperation, "set", "Session storage set operation executed.");
+                        equal(lastStorageSet.key, 'keySet', "Set executed on the correct key.");
+                        equal(lastStorageSet.value, 'string|valueSet', "Set executed with the correct value.");
+                    });
+
+                    test( "getItem", function () {
+                        var value = currentStorage.getItem('keyGet');
+
+                        equal(lastStorageOperation, "get", "Session storage get operation executed.");
+                        equal(value, "keyGet-value", "Returned the expected value correctly.");
+                    });
+
+                    test( "hasItem - true", function () {
+                        var value = currentStorage.hasItem('keyHas');
+
+                        equal(lastStorageOperation, "get", "Session storage get operation executed.");
+                        equal(value, true, "Returned the expected value correctly.");
+                    });
+
+                    test( "hasItem - false", function () {
+                        forcedValueReturn = null;
+                        var value = currentStorage.hasItem('keyHas');
+
+                        equal(lastStorageOperation, "get", "Session storage get operation executed.");
+                        equal(value, false, "Returned the expected value correctly.");
+                    });
+
+                    test( "removeItem", function () {
+                        currentStorage.removeItem('keyRemove');
+
+                        equal(lastStorageOperation, "remove", "Session storage remove operation executed.");
+                        equal(lastStorageSet.key, 'keyRemove', "Remove executed on the correct key.");
+                    });
+
+                    test( "clear", function () {
+                        currentStorage.clear();
+
+                        equal(lastStorageOperation, "clear", "Session storage clear operation executed.");
+                    });
+
+
+                    test( "setItem - string", function () {
+                        currentStorage.setItem("keySet", "testString");
+
+                        equal(lastStorageSet.value, "string|testString", "String type saved.");
+                    });
+
+                    test( "setItem - boolean", function () {
+                        currentStorage.setItem("keySet", true);
+
+                        equal(lastStorageSet.value, "boolean|true", "Boolean type saved.");
+                    });
+
+                    test( "setItem - int", function () {
+                        currentStorage.setItem("keySet", 8);
+
+                        equal(lastStorageSet.value, "int|8", "Integer type saved.");
+                    });
+
+                    test( "setItem - float", function () {
+                        currentStorage.setItem("keySet", 8.1);
+
+                        equal(lastStorageSet.value, "float|8.1", "Float type saved.");
+                    });
+
+                    test( "setItem - array", function () {
+                        currentStorage.setItem("keySet", [1, 2]);
+
+                        equal(lastStorageSet.value, "json|[1,2]", "Array type saved.");
+                    });
+
+                    test( "setItem - JSON object", function () {
+                        currentStorage.setItem("keySet", {"key1":"value1", "key2": [4, 5]});
+
+                        equal(lastStorageSet.value, 'json|{"key1":"value1","key2":[4,5]}', "JSON object saved.");
+                    });
+
+                    test( "setItem - unserializable object", function () {
+                        currentStorage.setItem("keySet", window);
+
+                        equal(lastStorageSet.value, "object|[object Window]", "Object saved as expected.");
+                    });
+
+                    test( "setItem - unknown type", function () {
+                        var value = function () {};
+                        currentStorage.setItem("keySet", value);
+
+                        equal(lastStorageSet.value, "unknown|"+value.toString(), "Unknown type saved as expected.");
+                    });
+
+
+
+
+                    test( "getItem - string", function () {
+                        forcedValueReturn = "string|testString";
+                        var value = currentStorage.getItem("getKey");
+
+                        equal(value, "testString", "String type returned correctly.");
+                    });
+
+                    test( "getItem - boolean", function () {
+                        forcedValueReturn = "boolean|true";
+                        var value = currentStorage.getItem("getKey");
+
+                        equal(value, true, "Boolean type returned correctly.");
+                    });
+
+                    test( "getItem - int", function () {
+                        forcedValueReturn = "int|8";
+                        var value = currentStorage.getItem("getKey");
+
+                        equal(value, 8, "Integer type returned correctly.");
+                    });
+
+                    test( "getItem - float", function () {
+                        forcedValueReturn = "float|8.1";
+                        var value = currentStorage.getItem("getKey");
+
+                        equal(value, 8.1, "Float type returned correctly.");
+                    });
+
+                    test( "getItem - array", function () {
+                        forcedValueReturn = "json|[1,2]";
+                        var value = currentStorage.getItem("getKey");
+
+                        deepEqual(value, [1, 2], "Array type returned correctly.");
+                    });
+
+                    test( "getItem - JSON object", function () {
+                        forcedValueReturn = 'json|{"key1":"value1","key2":[4,5]}';
+                        var value = currentStorage.getItem("getKey");
+
+                        deepEqual(value, {"key1":"value1", "key2": [4, 5]}, "JSON object returned correctly.");
+                    });
+
+                    test( "getItem - unserializable object", function () {
+                        forcedValueReturn = "json|{}";
+                        var value = currentStorage.getItem("getKey");
+
+                        deepEqual(value, {}, "Object returned correctly.");
+                    });
+
+                    test( "getItem - unknown type", function () {
+                        var expected = (function () {}).toString();
+
+                        forcedValueReturn = "unknown|"+expected;
+
+                        var value = currentStorage.getItem("getKey");
+
+                        equal(value, expected, "Unknown type returned correctly.");
+                    });
+                } else {
+                    test("Support", function () {
+                        ok(true, "Session storage supported, but cannot be overridden");
+                    });
+                }
+            } catch (e) {
+                test("Support", function () {
+                    ok(true, "Session storage supported, but cannot be overridden");
+                });
+            }
+        } else {
+            module( "session storage not available", {
+            });
+
+            test( "Support", function () {
+                ok(false, "Session storage not supported.");
+            });
+        }
+    </script>
+</body>
+</html>

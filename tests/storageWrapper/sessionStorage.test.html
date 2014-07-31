@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>sessionStorage</title>
+    <link rel="stylesheet" href="../../node_modules/gruntmodule-qunit/lib/qunit/qunit.css"/>
+</head>
+<body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture">
+        <!-- HTML to test goes here -->
+    </div>
+
+    <script src="../../node_modules/gruntmodule-qunit/lib/qunit/qunit.js"></script>
+    <script src="../../node_modules/gruntmodule-qunit/helpers/browserify.js"></script>
+    <script>
+        // mockup of modules goes here
+        
+        var storageType;
+        storageWrapperMockup = function (type) {
+            storageType = type;
+        };
+
+        // define the require function and register the mockups by path
+        var require = defineRequire({
+            './StorageWrapper.js': storageWrapperMockup
+        });
+
+        // define export variables
+        defineExports();
+    </script>
+
+    <!-- Import the script to be tested -->
+    <script src="../../src/javascripts/storageWrapper/sessionStorage.js"></script>
+
+    <script>
+        // restore the browserify variables' original value
+        restoreExports();
+    </script>
+
+    <script>
+        // define modules and tests
+        module("sessionStorage", {
+            setup: function () {
+                // setup code
+            },
+            teardown: function () {
+                // teardown code
+            }
+        });
+
+        test("type", function () {
+            equal(storageType, "sessionStorage", "Session storage initialized.");
+        });
+    </script>
+</body>
+</html>

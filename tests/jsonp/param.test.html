@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>param</title>
+    <link rel="stylesheet" href="../../node_modules/gruntmodule-qunit/lib/qunit/qunit.css"/>
+</head>
+<body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture">
+        <!-- HTML to test goes here -->
+    </div>
+
+    <script src="../../node_modules/gruntmodule-qunit/lib/qunit/qunit.js"></script>
+    <script src="../../node_modules/gruntmodule-qunit/helpers/browserify.js"></script>
+    <script>
+        // mockup of modules goes here
+
+        // define the require function and register the mockups by path
+        var require = defineRequire({
+        });
+
+        // define export variables
+        defineExports();
+    </script>
+
+    <!-- Import the script to be tested -->
+    <script src="../../src/javascripts/jsonp/param.js"></script>
+
+    <script>
+        // restore the browserify variables' original value
+        restoreExports();
+    </script>
+
+    <script>
+        // define modules and tests
+        module("param", {
+            setup: function () {
+                // setup code
+            },
+            teardown: function () {
+                // teardown code
+            }
+        });
+
+        test("serialize", function () {
+            var result = nodeModule.exports({
+                "key1": "value1",
+                "key2": function () {
+                    return "value2"
+                },
+                "key3": "value with spaces",
+                "key4": "special+characters=in&this*value"
+            });
+
+            equal(result, "key1=value1&key2=value2&key3=value+with+spaces&key4=special%2Bcharacters%3Din%26this*value", "Object correctly serialized.");
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Events</title>
+    <link rel="stylesheet" href="../../node_modules/gruntmodule-qunit/lib/qunit/qunit.css"/>
+</head>
+<body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture">
+        <!-- HTML to test goes here -->
+    </div>
+
+    <script src="../../node_modules/gruntmodule-qunit/lib/qunit/qunit.js"></script>
+    <script src="../../node_modules/gruntmodule-qunit/helpers/browserify.js"></script>
+    <script>
+        var events;
+
+        // define export variables
+        defineExports();
+    </script>
+
+    <!-- Import the script to be tested -->
+    <script src="../../src/javascripts/events/Events.js"></script>
+
+    <script>
+        // restore the browserify variables' original value
+        restoreExports();
+    </script>
+
+    <script>
+        // define modules and tests
+        module("core", {
+            setup: function () {
+                events = new Events();
+            },
+            teardown: function () {
+                
+            }
+        });
+
+        test("on, one, off, trigger", function () {
+            var callbackStatus;
+            var resetCallbackStatus = function () {
+                callbackStatus = {
+                    event1: {
+                        callback1: {
+                            called: false,
+                            args: null
+                        },
+                        callback2: {
+                            called: false,
+                            args: null
+                        }
+                    },
+                    event2: {
+                        callback1: {
+                            called: false,
+                            args: null
+                        },
+                        callback2: {
+                            called: false,
+                            args: null
+                        },
+                        callback3: {
+                            called: false,
+                            args: null
+                        },
+                        callback4: {
+                            called: false,
+                            args: null
+                        }
+                    }
+                };
+            };
+            var callbacks = {
+                event1: {
+                    callback1: function () {
+                        callbackStatus.event1.callback1.called = true;
+                        callbackStatus.event1.callback1.args = arguments;
+                    },
+                    callback2: function () {
+                        callbackStatus.event1.callback2.called = true;
+                        callbackStatus.event1.callback2.args = arguments;
+                    }
+                },
+                event2: {
+                    callback1: function () {
+                        callbackStatus.event2.callback1.called = true;
+                        callbackStatus.event2.callback1.args = arguments;
+                    },
+                    callback2: function () {
+                        callbackStatus.event2.callback2.called = true;
+                        callbackStatus.event2.callback2.args = arguments;
+                    },
+                    callback3: function () {
+                        callbackStatus.event2.callback3.called = true;
+                        callbackStatus.event2.callback3.args = arguments;
+                    },
+                    callback4: function () {
+                        callbackStatus.event2.callback4.called = true;
+                        callbackStatus.event2.callback4.args = arguments;
+                    }
+                }
+            };
+
+            resetCallbackStatus();
+
+            events.on("event1", callbacks.event1.callback1);
+            events.on("event1", callbacks.event1.callback2);
+
+            events.one("event2", callbacks.event2.callback1);
+            events.one("event2", callbacks.event2.callback2);
+            events.on( "event2", callbacks.event2.callback3);
+            events.on( "event2", callbacks.event2.callback4);
+
+
+            // simple event handling with on and one
+            events.trigger("event1");
+            ok(callbackStatus.event1.callback1.called, "Callback1 on trigger called.");
+            ok(callbackStatus.event1.callback2.called, "Callback2 on trigger called.");
+
+            resetCallbackStatus();
+
+            events.trigger("event1");
+            ok(callbackStatus.event1.callback1.called, "Callback1 on trigger called the second time as well.");
+            ok(callbackStatus.event1.callback2.called, "Callback2 on trigger called the second time as well.");
+
+            resetCallbackStatus();
+
+            events.trigger("event2");
+            ok(callbackStatus.event2.callback1.called, "Callback1 on trigger called.");
+            ok(callbackStatus.event2.callback2.called, "Callback2 on trigger called.");
+            ok(callbackStatus.event2.callback3.called, "Callback3 on trigger called.");
+            ok(callbackStatus.event2.callback4.called, "Callback4 on trigger called.");
+
+            resetCallbackStatus();
+
+            events.trigger("event2");
+            ok(!callbackStatus.event2.callback1.called, "Callback1 on trigger registered with 'one' not called the second time.");
+            ok(!callbackStatus.event2.callback2.called, "Callback2 on trigger registered with 'one' not called the second time.");
+            ok(callbackStatus.event2.callback3.called, "Callback3 on trigger registered with 'on' called the second time as well.");
+            ok(callbackStatus.event2.callback4.called, "Callback4 on trigger registered with 'on' called the second time as well.");
+
+            resetCallbackStatus();
+
+            // trigger with parameters
+            var params = {
+                key1: "value1",
+                key2: "value2"
+            };
+            events.trigger("event1", params);
+            deepEqual(callbackStatus.event1.callback1.args[0], params, "Custom data correctly passed to the callback1.");
+            deepEqual(callbackStatus.event1.callback2.args[0], params, "Custom data correctly passed to the callback2.");
+
+            resetCallbackStatus();
+
+            // trigger with multiple parameters
+            var params = [{
+                    key1: "value1",
+                    key2: "value2"
+                }, "param2"];
+            events.trigger("event1", params);
+            deepEqual(Array.prototype.slice.call(callbackStatus.event1.callback1.args), params, "Custom data correctly passed to the callback1.");
+            deepEqual(Array.prototype.slice.call(callbackStatus.event1.callback2.args), params, "Custom data correctly passed to the callback2.");
+
+            resetCallbackStatus();
+
+            // off for all events
+            events.off("event1");
+            events.trigger("event1");
+            ok(!callbackStatus.event1.callback1.called, "Callback1 successfully removed.");
+            ok(!callbackStatus.event1.callback2.called, "Callback2 successfully removed.");
+
+            resetCallbackStatus();
+
+            // off for a specific event
+            events.off("event2", callbacks.event2.callback4);
+            events.trigger("event2");
+            ok(callbackStatus.event2.callback3.called, "Callback3 left untouched and called.");
+            ok(!callbackStatus.event2.callback4.called, "Callback4 successfully removed.");
+        });
+    </script>
+</body>
+</html>
