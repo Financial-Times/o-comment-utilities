@@ -13,18 +13,18 @@ function Events () {
 
     /**
      * Registers a new event handler to a specified event which will be called each time the event is triggered.
-     * @param  {string}   event    Name of the event.
+     * @param  {string}   evt    Name of the event.
      * @param  {Function} handler Handler function which will be called when the event is triggered.
      */
-    this.on = function (event, handler) {
-        if (typeof event !== 'string' || typeof handler !== 'function') {
+    this.on = function (evt, handler) {
+        if (typeof evt !== 'string' || typeof handler !== 'function') {
             return;
         }
 
-        if (!events[event]) {
-            events[event] = [];
+        if (!events[evt]) {
+            events[evt] = [];
         }
-        events[event].push({
+        events[evt].push({
             callback: handler
         });
     };
@@ -34,15 +34,15 @@ function Events () {
      * @param  {string}   event    Name of the event.
      * @param  {Function} handler Handler function which will be called when the event is triggered.
      */
-    this.one = function (event, handler) {
-        if (typeof event !== 'string' || typeof handler !== 'function') {
+    this.one = function (evt, handler) {
+        if (typeof evt !== 'string' || typeof handler !== 'function') {
             return;
         }
 
-        if (!events[event]) {
-            events[event] = [];
+        if (!events[evt]) {
+            events[evt] = [];
         }
-        events[event].push({
+        events[evt].push({
             callback: handler,
             once: true
         });
@@ -70,27 +70,27 @@ function Events () {
      * If there's no parameters, all event handlers are removed.
      * If only the event is specified, all event handlers are removed from that event handler.
      * If an event handler is specified as well, only that specific event handler will be removed.
-     * @param  {string}   event   Optional. Name of the event from which the event handler should be removed.
+     * @param  {string}   evt   Optional. Name of the event from which the event handler should be removed.
      * @param  {Function} handler Optional. Handler function to be removed.
      */
-    this.off = function (event, handler) {
-        var eventNotSet = (typeof event === 'undefined');
+    this.off = function (evt, handler) {
+        var eventNotSet = (typeof evt === 'undefined');
         var handlerNotSet = (typeof handler === 'undefined');
-        var eventCorrect = (typeof event === 'string');
+        var eventCorrect = (typeof evt === 'string');
         var handlerCorrect = (typeof handler === 'function');
 
         if (eventNotSet) {
             events = {};
         } else {
             if (eventCorrect) {
-                if (events[event]) {
+                if (events[evt]) {
                     if (handlerNotSet) {
-                        delete events[event];
+                        delete events[evt];
                     } else if (handlerCorrect) {
-                        var index = getIndexOfHandler(events[event], handler);
+                        var index = getIndexOfHandler(events[evt], handler);
 
                         if (index > -1) {
-                            events[event].splice(index, 1);
+                            events[evt].splice(index, 1);
                         }
                     }
                 }
@@ -100,23 +100,23 @@ function Events () {
 
     /**
      * Triggers an event which causes the call of each handler attached.
-     * @param  {string} event      Name of the event which will be triggered.
+     * @param  {string} evt      Name of the event which will be triggered.
      * @param  {any}    customData Optional. Data to be passed to handlers.
      */
-    this.trigger = function (event, customData) {
+    this.trigger = function (evt, customData) {
         var i;
 
-        if (events[event]) {
+        if (events[evt]) {
             if (!(customData instanceof Array)) {
                 customData = [customData];
             }
 
             i=0;
-            while (i < events[event].length) {
-                events[event][i].callback.apply(this, customData);
+            while (i < events[evt].length) {
+                events[evt][i].callback.apply(this, customData);
 
-                if (events[event][i].once === true) {
-                    events[event].splice(i, 1);
+                if (events[evt][i].once === true) {
+                    events[evt].splice(i, 1);
                 } else {
                     i++;
                 }
