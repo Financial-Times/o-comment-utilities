@@ -106,6 +106,8 @@ function Events () {
      */
     this.trigger = function (evt, customData) {
         if (!inProgressTriggers[evt]) {
+            inProgressTriggers[evt] = true;
+
             var i;
 
             if (events[evt]) {
@@ -124,6 +126,8 @@ function Events () {
                     }
                 }
             }
+
+            inProgressTriggers[evt] = false;
         }
     };
 }
