@@ -4,7 +4,12 @@
  */
 var storageOk = false;
 if (typeof Storage !== "undefined") {
-    storageOk = true;
+    try {
+        localStorage.setItem('test', 2);
+        localStorage.removeItem('test', 2);
+
+        storageOk = true;
+    } catch (e) {}
 }
 
 var StorageWrapper = null;
