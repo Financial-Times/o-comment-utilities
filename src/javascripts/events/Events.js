@@ -98,27 +98,30 @@ function Events () {
         }
     };
 
+    var inProgressTriggers = {};
     /**
      * Triggers an event which causes the call of each handler attached.
      * @param  {string} evt      Name of the event which will be triggered.
      * @param  {any}    customData Optional. Data to be passed to handlers.
      */
     this.trigger = function (evt, customData) {
-        var i;
+        if (!inProgressTriggers[evt]) {
+            var i;
 
-        if (events[evt]) {
-            if (!(customData instanceof Array)) {
-                customData = [customData];
-            }
+            if (events[evt]) {
+                if (!(customData instanceof Array)) {
+                    customData = [customData];
+                }
 
-            i=0;
-            while (i < events[evt].length) {
-                events[evt][i].callback.apply(this, customData);
+                i=0;
+                while (i < events[evt].length) {
+                    events[evt][i].callback.apply(this, customData);
 
-                if (events[evt][i].once === true) {
-                    events[evt].splice(i, 1);
-                } else {
-                    i++;
+                    if (events[evt][i].once === true) {
+                        events[evt].splice(i, 1);
+                    } else {
+                        i++;
+                    }
                 }
             }
         }
