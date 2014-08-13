@@ -114,7 +114,12 @@
           <div class="description"><p>Is storage supported?</p> </div>
           <pre><code class="language-javascript">var storageOk = false;
 if (typeof Storage !== &quot;undefined&quot;) {
-    storageOk = true;
+    try {
+        localStorage.setItem('test', 2);
+        localStorage.removeItem('test', 2);
+
+        storageOk = true;
+    } catch (e) {}
 }
 
 var StorageWrapper = null;

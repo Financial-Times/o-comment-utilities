@@ -5,11 +5,52 @@
 function Events () {
     "use strict";
 
+    var self = this;
+
     /**
      * Isolated set of events.
      * @type {Object}
      */
     var events = {};
+
+    var inProgressOffTrigger = {};
+    var actionQueue = {};
+
+
+    function queueAnAction (evt, type, args) {
+        if (!actionQueue[evt]) {
+            actionQueue[evt] = [];
+        }
+
+        actionQueue[evt].push({
+            evt: evt,
+            type: type,
+            args: args
+        });
+        nextAction(evt);
+    }
+
+    function nextAction (evt) {
+        if (!inProgressOffTrigger[evt]) {
+            var action = actionQueue[evt].shift();
+
+            if (action) {
+                inProgressOffTrigger[evt] = true;
+
+                switch (action.type) {
+                    case 'off':
+                        off.apply(self, action.args);
+                        break;
+                    case 'trigger':
+                        trigger.apply(self, action.args);
+                        break;
+                }
+
+                inProgressOffTrigger[evt] = false;
+                nextAction(evt);
+            }
+        }
+    }
 
     /**
      * Registers a new event handler to a specified event which will be called each time the event is triggered.
@@ -73,6 +114,31 @@ function Events () {
      * @param  {string}   evt   Optional. Name of the event from which the event handler should be removed.
      * @param  {Function} handler Optional. Handler function to be removed.
      */
+    var off = function (evt, handler) {
+        var handlerNotSet = (typeof handler === 'undefined');
+        var eventCorrect = (typeof evt === 'string');
+        var handlerCorrect = (typeof handler === 'function');
+
+        if (eventCorrect) {
+            if (events[evt]) {
+                if (handlerNotSet) {
+                    delete events[evt];
+                } else if (handlerCorrect) {
+                    var index = getIndexOfHandler(events[evt], handler);
+
+                    if (index > -1) {
+                        events[evt].splice(index, 1);
+                    }
+                }
+            }
+        }
+    };
+
+    /**
+     * Queues off process(es) for the event(s).
+     * @param  {string}   evt   Optional. Name of the event from which the event handler should be removed.
+     * @param  {Function} handler Optional. Handler function to be removed.
+     */
     this.off = function (evt, handler) {
         var eventNotSet = (typeof evt === 'undefined');
         var handlerNotSet = (typeof handler === 'undefined');
@@ -80,55 +146,57 @@ function Events () {
         var handlerCorrect = (typeof handler === 'function');
 
         if (eventNotSet) {
-            events = {};
+            for (var evtKey in events) {
+                if (events.hasOwnProperty(evtKey)) {
+                    queueAnAction(evtKey, 'off', [evtKey]);
+                }
+            }
         } else {
             if (eventCorrect) {
                 if (events[evt]) {
                     if (handlerNotSet) {
-                        delete events[evt];
+                        queueAnAction(evt, 'off', [evt]);
                     } else if (handlerCorrect) {
-                        var index = getIndexOfHandler(events[evt], handler);
-
-                        if (index > -1) {
-                            events[evt].splice(index, 1);
-                        }
+                        queueAnAction(evt, 'off', arguments);
                     }
                 }
             }
         }
     };
 
-    var inProgressTriggers = {};
     /**
      * Triggers an event which causes the call of each handler attached.
      * @param  {string} evt      Name of the event which will be triggered.
      * @param  {any}    customData Optional. Data to be passed to handlers.
      */
-    this.trigger = function (evt, customData) {
-        if (!inProgressTriggers[evt]) {
-            inProgressTriggers[evt] = true;
+    var trigger = function (evt, customData) {
+        var i;
 
-            var i;
-
-            if (events[evt]) {
-                if (!(customData instanceof Array)) {
-                    customData = [customData];
-                }
-
-                i=0;
-                while (i < events[evt].length) {
-                    events[evt][i].callback.apply(this, customData);
-
-                    if (events[evt][i].once === true) {
-                        events[evt].splice(i, 1);
-                    } else {
-                        i++;
-                    }
-                }
+        if (events[evt]) {
+            if (!(customData instanceof Array)) {
+                customData = [customData];
             }
 
-            inProgressTriggers[evt] = false;
+            i=0;
+            while (i < events[evt].length) {
+                events[evt][i].callback.apply(this, customData);
+
+                if (events[evt][i].once === true) {
+                    events[evt].splice(i, 1);
+                } else {
+                    i++;
+                }
+            }
         }
+    };
+
+    /**
+     * Queues a trigger process for the event.
+     * @param  {string} evt      Name of the event which will be triggered.
+     * @param  {any}    customData Optional. Data to be passed to handlers.
+     */
+    this.trigger = function (evt) {
+        queueAnAction(evt, 'trigger', arguments);
     };
 }
 module.exports = Events;

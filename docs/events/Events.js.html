@@ -98,6 +98,10 @@
               </li>
               <li><a href="#off"><i class="alert alert-info"></i><span>off</span></a>
               </li>
+              <li><a href="#off"><i class="alert alert-info"></i><span>off</span></a>
+              </li>
+              <li><a href="#trigger"><i class="alert alert-info"></i><span>trigger</span></a>
+              </li>
               <li><a href="#trigger"><i class="alert alert-info"></i><span>trigger</span></a>
               </li>
             </ul>
@@ -113,7 +117,9 @@
           </section>
           <div class="description"><p>When instantiated, it creates an isolated event collection.<br />These events can be handled and triggered using the resulted object.</p> </div>
           <pre><code class="language-javascript">function Events () {
-    &quot;use strict&quot;;</code></pre>
+    &quot;use strict&quot;;
+
+    var self = this;</code></pre>
           <section id="events">
             <h1>events</h1>
             <h5 class="subheader"></h5>
@@ -122,7 +128,46 @@
             </p>
           </section>
           <div class="description"><p>Isolated set of events.</p> </div>
-          <pre><code class="language-javascript">var events = {};</code></pre>
+          <pre><code class="language-javascript">var events = {};
+
+    var inProgressOffTrigger = {};
+    var actionQueue = {};
+
+
+    function queueAnAction (evt, type, args) {
+        if (!actionQueue[evt]) {
+            actionQueue[evt] = [];
+        }
+
+        actionQueue[evt].push({
+            evt: evt,
+            type: type,
+            args: args
+        });
+        nextAction(evt);
+    }
+
+    function nextAction (evt) {
+        if (!inProgressOffTrigger[evt]) {
+            var action = actionQueue[evt].shift();
+
+            if (action) {
+                inProgressOffTrigger[evt] = true;
+
+                switch (action.type) {
+                    case 'off':
+                        off.apply(self, action.args);
+                        break;
+                    case 'trigger':
+                        trigger.apply(self, action.args);
+                        break;
+                }
+
+                inProgressOffTrigger[evt] = false;
+                nextAction(evt);
+            }
+        }
+    }</code></pre>
           <section id="on">
             <h1>on</h1>
             <h5 class="subheader"></h5>
@@ -140,7 +185,7 @@
             </thead>
             <tbody>
               <tr>
-                <td>event</td>
+                <td>evt</td>
                 <td>string</td>
                 <td>Name of the event.</td>
               </tr>
@@ -152,15 +197,15 @@
             </tbody>
           </table>
           <div class="description"><p>Registers a new event handler to a specified event which will be called each time the event is triggered.</p> </div>
-          <pre><code class="language-javascript">this.on = function (event, handler) {
-        if (typeof event !== 'string' || typeof handler !== 'function') {
+          <pre><code class="language-javascript">this.on = function (evt, handler) {
+        if (typeof evt !== 'string' || typeof handler !== 'function') {
             return;
         }
 
-        if (!events[event]) {
-            events[event] = [];
+        if (!events[evt]) {
+            events[evt] = [];
         }
-        events[event].push({
+        events[evt].push({
             callback: handler
         });
     };</code></pre>
@@ -193,15 +238,15 @@
             </tbody>
           </table>
           <div class="description"><p>Registers a new event handler to a specified event which will be called only the first time the event is triggered.</p> </div>
-          <pre><code class="language-javascript">this.one = function (event, handler) {
-        if (typeof event !== 'string' || typeof handler !== 'function') {
+          <pre><code class="language-javascript">this.one = function (evt, handler) {
+        if (typeof evt !== 'string' || typeof handler !== 'function') {
             return;
         }
 
-        if (!events[event]) {
-            events[event] = [];
+        if (!events[evt]) {
+            events[evt] = [];
         }
-        events[event].push({
+        events[evt].push({
             callback: handler,
             once: true
         });
@@ -248,6 +293,54 @@
             <h1>off</h1>
             <h5 class="subheader"></h5>
             <p>
+              <div class="label label-info radius ctx-type">function</div><span>off()</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>evt</td>
+                <td>string</td>
+                <td>Optional. Name of the event from which the event handler should be removed.</td>
+              </tr>
+              <tr>
+                <td>handler</td>
+                <td>Function</td>
+                <td>Optional. Handler function to be removed.</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Removes event handler(s).<br />If there's no parameters, all event handlers are removed.<br />If only the event is specified, all event handlers are removed from that event handler.<br />If an event handler is specified as well, only that specific event handler will be removed.</p> </div>
+          <pre><code class="language-javascript">var off = function (evt, handler) {
+        var handlerNotSet = (typeof handler === 'undefined');
+        var eventCorrect = (typeof evt === 'string');
+        var handlerCorrect = (typeof handler === 'function');
+
+        if (eventCorrect) {
+            if (events[evt]) {
+                if (handlerNotSet) {
+                    delete events[evt];
+                } else if (handlerCorrect) {
+                    var index = getIndexOfHandler(events[evt], handler);
+
+                    if (index &gt; -1) {
+                        events[evt].splice(index, 1);
+                    }
+                }
+            }
+        }
+    };</code></pre>
+          <section id="off">
+            <h1>off</h1>
+            <h5 class="subheader"></h5>
+            <p>
               <div class="label label-info radius ctx-type">method</div><span>this.off()</span>
             </p>
           </section>
@@ -261,7 +354,7 @@
             </thead>
             <tbody>
               <tr>
-                <td>event</td>
+                <td>evt</td>
                 <td>string</td>
                 <td>Optional. Name of the event from which the event handler should be removed.</td>
               </tr>
@@ -272,27 +365,76 @@
               </tr>
             </tbody>
           </table>
-          <div class="description"><p>Removes event handler(s).<br />If there's no parameters, all event handlers are removed.<br />If only the event is specified, all event handlers are removed from that event handler.<br />If an event handler is specified as well, only that specific event handler will be removed.</p> </div>
-          <pre><code class="language-javascript">this.off = function (event, handler) {
-        var eventNotSet = (typeof event === 'undefined');
+          <div class="description"><p>Queues off process(es) for the event(s).</p> </div>
+          <pre><code class="language-javascript">this.off = function (evt, handler) {
+        var eventNotSet = (typeof evt === 'undefined');
         var handlerNotSet = (typeof handler === 'undefined');
-        var eventCorrect = (typeof event === 'string');
+        var eventCorrect = (typeof evt === 'string');
         var handlerCorrect = (typeof handler === 'function');
 
         if (eventNotSet) {
-            events = {};
+            for (var evtKey in events) {
+                if (events.hasOwnProperty(evtKey)) {
+                    queueAnAction(evtKey, 'off', [evtKey]);
+                }
+            }
         } else {
             if (eventCorrect) {
-                if (events[event]) {
+                if (events[evt]) {
                     if (handlerNotSet) {
-                        delete events[event];
+                        queueAnAction(evt, 'off', [evt]);
                     } else if (handlerCorrect) {
-                        var index = getIndexOfHandler(events[event], handler);
-
-                        if (index &gt; -1) {
-                            events[event].splice(index, 1);
-                        }
+                        queueAnAction(evt, 'off', arguments);
                     }
+                }
+            }
+        }
+    };</code></pre>
+          <section id="trigger">
+            <h1>trigger</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">function</div><span>trigger()</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>evt</td>
+                <td>string</td>
+                <td>Name of the event which will be triggered.</td>
+              </tr>
+              <tr>
+                <td>customData</td>
+                <td>any</td>
+                <td>Optional. Data to be passed to handlers.</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Triggers an event which causes the call of each handler attached.</p> </div>
+          <pre><code class="language-javascript">var trigger = function (evt, customData) {
+        var i;
+
+        if (events[evt]) {
+            if (!(customData instanceof Array)) {
+                customData = [customData];
+            }
+
+            i=0;
+            while (i &lt; events[evt].length) {
+                events[evt][i].callback.apply(this, customData);
+
+                if (events[evt][i].once === true) {
+                    events[evt].splice(i, 1);
+                } else {
+                    i++;
                 }
             }
         }
@@ -314,7 +456,7 @@
             </thead>
             <tbody>
               <tr>
-                <td>event</td>
+                <td>evt</td>
                 <td>string</td>
                 <td>Name of the event which will be triggered.</td>
               </tr>
@@ -325,26 +467,9 @@
               </tr>
             </tbody>
           </table>
-          <div class="description"><p>Triggers an event which causes the call of each handler attached.</p> </div>
-          <pre><code class="language-javascript">this.trigger = function (event, customData) {
-        var i;
-
-        if (events[event]) {
-            if (!(customData instanceof Array)) {
-                customData = [customData];
-            }
-
-            i=0;
-            while (i &lt; events[event].length) {
-                events[event][i].callback.apply(this, customData);
-
-                if (events[event][i].once === true) {
-                    events[event].splice(i, 1);
-                } else {
-                    i++;
-                }
-            }
-        }
+          <div class="description"><p>Queues a trigger process for the event.</p> </div>
+          <pre><code class="language-javascript">this.trigger = function (evt) {
+        queueAnAction(evt, 'trigger', arguments);
     };
 }
 module.exports = Events;</code></pre>
