@@ -10,3 +10,4 @@ exports.logger = require('./src/javascripts/logger/logger.js');
 exports.functionSync = {
     parallel: require('./src/javascripts/functionSync/parallel.js')
 };
+exports.documentReady = require('./src/javascripts/documentReady/documentReady.js');

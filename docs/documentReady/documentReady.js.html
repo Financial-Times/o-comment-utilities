@@ -73,7 +73,7 @@
           <ul class="nav nav-list bs-docs-sidenav affix-top">
             <li><a href="index.html">Main</a></li>
             <li><a href="documentReady\contentLoaded.js.html">documentReady\contentLoaded.js</a></li>
-            <li><a href="documentReady\documentReady.js.html">documentReady\documentReady.js</a></li>
+            <li class="active"><a href="documentReady\documentReady.js.html">documentReady\documentReady.js</a></li>
             <li><a href="envConfig\Config.js.html">envConfig\Config.js</a></li>
             <li><a href="events\Events.js.html">events\Events.js</a></li>
             <li><a href="functionSync\parallel.js.html">functionSync\parallel.js</a></li>
@@ -83,28 +83,32 @@
             <li><a href="main.js.html">main.js</a></li>
             <li><a href="scriptLoader\scriptLoader.js.html">scriptLoader\scriptLoader.js</a></li>
             <li><a href="storageWrapper\localStorage.js.html">storageWrapper\localStorage.js</a></li>
-            <li class="active"><a href="storageWrapper\sessionStorage.js.html">storageWrapper\sessionStorage.js</a></li>
+            <li><a href="storageWrapper\sessionStorage.js.html">storageWrapper\sessionStorage.js</a></li>
             <li><a href="storageWrapper\StorageWrapper.js.html">storageWrapper\StorageWrapper.js</a></li>
           </ul>
           <div class="scrollspy">
             <ul class="nav nav-list bs-docs-sidenav affix-top">
-              <li><a href="#StorageWrapper"><i class="alert alert-success"></i><span>StorageWrapper</span></a>
+              <li><a href="#contentLoaded"><i class="alert alert-success"></i><span>contentLoaded</span></a>
               </li>
             </ul>
           </div>
         </div>
         <div class="span9">
-          <section id="StorageWrapper">
-            <h1>StorageWrapper</h1>
+          <section id="contentLoaded">
+            <h1>contentLoaded</h1>
             <h5 class="subheader"></h5>
             <p>
-              <div class="label label-success radius ctx-type">declaration</div><span>StorageWrapper</span>
+              <div class="label label-success radius ctx-type">declaration</div><span>contentLoaded</span>
             </p>
           </section>
           <div class="description"> </div>
-          <pre><code class="language-javascript">var StorageWrapper = require('./StorageWrapper.js');
+          <pre><code class="language-javascript">var contentLoaded = require('./contentLoaded.js');
 
-module.exports = new StorageWrapper('sessionStorage');</code></pre>
+module.exports = function (callback) {
+    &quot;use strict&quot;;
+    
+    contentLoaded(window, callback);
+};</code></pre>
         </div>
       </div>
     </div>
