@@ -11,3 +11,4 @@ exports.functionSync = {
     parallel: require('./src/javascripts/functionSync/parallel.js')
 };
 exports.documentReady = require('./src/javascripts/documentReady/documentReady.js');
+exports.initDomConstruct = require('./src/javascripts/domConstruct/domConstruct.js');
