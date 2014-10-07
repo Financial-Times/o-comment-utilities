@@ -11,7 +11,7 @@ module.exports = function (Widget, baseClass) {
         for (var i = 0; i < instances.length; i++) {
             item = instances[i];
 
-            if (item.getAttribute('data-' + baseClass + '-autoconstruct') === true && item.id) {
+            if (item.getAttribute('data-' + baseClass + '-autoconstruct') === "true" && item.id) {
                 var config = {
                     elId: item.id
                 };
