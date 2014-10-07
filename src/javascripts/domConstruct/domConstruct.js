@@ -17,7 +17,7 @@ module.exports = function (Widget, baseClass) {
                 };
                 var match;
 
-                for (var j = 0; j < item.attributes; j++) {
+                for (var j = 0; j < item.attributes.length; j++) {
                     match = item.attributes[j].name.match(new RegExp('data-' + baseClass + '-config-(.*)'));
                     if (match && match.length) {
                         config[match[1]] = item.attributes[j].value;
