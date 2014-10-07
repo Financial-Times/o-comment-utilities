@@ -25,6 +25,7 @@ module.exports = function (Widget, baseClass) {
                 }
 
                 var widget = new Widget(config);
+                widget.load();
 
                 item.setAttribute('data-' + baseClass + '-widget-id', baseClass + '-widget-' + item.id);
                 window[baseClass + '-widget-' + item.id] = widget;
