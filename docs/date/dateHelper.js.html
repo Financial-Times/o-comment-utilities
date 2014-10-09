@@ -158,11 +158,11 @@ var date = {</code></pre>
             return new Date(timestampOrDate).getTime();
         }
 
-        if (timestampOrDate.toString().length &lt; 13) {
+        if (typeof timestampOrDate === &quot;number&quot; &amp;&amp; parseInt(timestampOrDate, 10).toString().length &lt; 13) {
             return timestampOrDate * 1000;
-        } else {
-            return timestampOrDate;
         }
+
+        return timestampOrDate;
     },</code></pre>
           <table class="table table-bordered table-striped">
             <thead>

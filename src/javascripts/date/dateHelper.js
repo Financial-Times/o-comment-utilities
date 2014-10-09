@@ -29,11 +29,11 @@ var date = {
             return new Date(timestampOrDate).getTime();
         }
 
-        if (timestampOrDate.toString().length < 13) {
+        if (typeof timestampOrDate === "number" && parseInt(timestampOrDate, 10).toString().length < 13) {
             return timestampOrDate * 1000;
-        } else {
-            return timestampOrDate;
         }
+
+        return timestampOrDate;
     },
 
     /**
