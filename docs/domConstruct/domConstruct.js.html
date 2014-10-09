@@ -75,10 +75,10 @@
             <li><a href="date\dateHelper.js.html">date\dateHelper.js</a></li>
             <li><a href="documentReady\contentLoaded.js.html">documentReady\contentLoaded.js</a></li>
             <li><a href="documentReady\documentReady.js.html">documentReady\documentReady.js</a></li>
-            <li><a href="domConstruct\domConstruct.js.html">domConstruct\domConstruct.js</a></li>
+            <li class="active"><a href="domConstruct\domConstruct.js.html">domConstruct\domConstruct.js</a></li>
             <li><a href="envConfig\Config.js.html">envConfig\Config.js</a></li>
             <li><a href="events\Events.js.html">events\Events.js</a></li>
-            <li class="active"><a href="functionSync\parallel.js.html">functionSync\parallel.js</a></li>
+            <li><a href="functionSync\parallel.js.html">functionSync\parallel.js</a></li>
             <li><a href="jsonp\jsonp.js.html">jsonp\jsonp.js</a></li>
             <li><a href="jsonp\param.js.html">jsonp\param.js</a></li>
             <li><a href="logger\logger.js.html">logger\logger.js</a></li>
@@ -90,115 +90,68 @@
           </ul>
           <div class="scrollspy">
             <ul class="nav nav-list bs-docs-sidenav affix-top">
-              <li><a href="#parallel"><i class="alert alert-info"></i><span>parallel</span></a>
+              <li><a href="#documentReady"><i class="alert alert-success"></i><span>documentReady</span></a>
               </li>
             </ul>
           </div>
         </div>
         <div class="span9">
-          <section id="parallel">
-            <h1>parallel</h1>
+          <section id="documentReady">
+            <h1>documentReady</h1>
             <h5 class="subheader"></h5>
             <p>
-              <div class="label label-info radius ctx-type">function</div><span>parallel()</span>
+              <div class="label label-success radius ctx-type">declaration</div><span>documentReady</span>
             </p>
           </section>
-          <table class="table table-bordered table-striped">
-            <thead>
-              <tr>
-                <th style="width:20%">Option name</th>
-                <th style="width:20%">Type</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>functions</td>
-                <td>Object</td>
-                <td>Object with named functions (key-value pairs) that should be executed and synced.</td>
-              </tr>
-              <tr>
-                <td>finalCallback</td>
-                <td>Function</td>
-                <td>Callback that is called when all functions finished their job. It also gets a parameter which aggregates data from all functions.</td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="description"><p>This submodule is meant to generate a callback only when all functions provided finished their execution.<br />This is achieved by passing a callback as parameter to the functions that are executed.</p> </div>
-          <pre><code class="language-javascript">function parallel (functions, finalCallback) {
+          <div class="description"> </div>
+          <pre><code class="language-javascript">var documentReady = require('../documentReady/documentReady.js');
+var sizzle = require('sizzle');
+
+var isDocumentReady = false;
+documentReady(function () {
+    &quot;use strict&quot;;
+    
+    isDocumentReady = true;
+});
+
+module.exports = function (Widget, baseClass) {
     &quot;use strict&quot;;
 
-    var key;
+    var parseDom = function () {
+        var instances = sizzle('.' + baseClass);
 
-    var done = false;
-    var dataAggregate = {};
+        var item;
+        for (var i = 0; i &lt; instances.length; i++) {
+            item = instances[i];
 
-    var status = {};
+            if (item.getAttribute('data-' + baseClass + '-autoconstruct') === &quot;true&quot; &amp;&amp; item.id &amp;&amp; item.innerHTML === &quot;&quot;) {
+                var config = {
+                    elId: item.id
+                };
+                var match;
 
-    for (key in functions) {
-        if (functions.hasOwnProperty(key)) {
-            status[key] = false;
-        }
-    }
-
-    var verify = function () {
-        var statusKey;
-
-        for (statusKey in status) {
-            if (status.hasOwnProperty(statusKey)) {
-                if (!status[statusKey]) {
-                    return false;
-                }
-            }
-        }
-
-        if (!done) {
-            finalCallback(null, dataAggregate);
-        }
-    };
-
-
-    var callTheFunction = function (_key) {
-        var thisCallbackDone = function (err, data) {
-            if (!done) {
-                if (err) {
-                    done = true;
-
-                    finalCallback({
-                        key: _key,
-                        error: err
-                    });
-                    return;
+                for (var j = 0; j &lt; item.attributes.length; j++) {
+                    match = item.attributes[j].name.match(new RegExp('data-' + baseClass + '-config-(.*)'));
+                    if (match &amp;&amp; match.length) {
+                        config[match[1]] = item.attributes[j].value;
+                    }
                 }
 
-                status[_key] = true;
-                dataAggregate[_key] = data;
+                var widget = new Widget(config);
+                widget.load();
 
-                verify();
-            }
-        };
-
-        if (typeof functions[_key] === 'function') {
-            functions[_key](thisCallbackDone);
-        } else if (typeof functions[_key] === 'object' &amp;&amp; typeof functions[_key].func === 'function') {
-            if (functions[_key].hasOwnProperty('args')) {
-                var args = functions[_key].args;
-                args.splice(0, 1, thisCallbackDone);
-
-                functions[_key].func.apply(this, args);
-            } else {
-                functions[_key].func(thisCallbackDone);
+                item.setAttribute('data-' + baseClass + '-widget-id', baseClass + '-widget-' + item.id);
+                window[baseClass + '-widget-' + item.id] = widget;
             }
         }
     };
 
-    for (key in functions) {
-        if (functions.hasOwnProperty(key)) {
-            callTheFunction(key);
-        }
+    if (isDocumentReady) {
+        parseDom();
+    } else {
+        documentReady(parseDom);
     }
-}
-module.exports = parallel;</code></pre>
+};</code></pre>
         </div>
       </div>
     </div>

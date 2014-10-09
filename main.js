@@ -12,3 +12,4 @@ exports.functionSync = {
 };
 exports.documentReady = require('./src/javascripts/documentReady/documentReady.js');
 exports.initDomConstruct = require('./src/javascripts/domConstruct/domConstruct.js');
+exports.dateHelper = require('./src/javascripts/date/dateHelper.js');

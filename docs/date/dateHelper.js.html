@@ -72,13 +72,13 @@
         <div class="span3 bs-docs-sidebar">
           <ul class="nav nav-list bs-docs-sidenav affix-top">
             <li><a href="index.html">Main</a></li>
-            <li><a href="date\dateHelper.js.html">date\dateHelper.js</a></li>
+            <li class="active"><a href="date\dateHelper.js.html">date\dateHelper.js</a></li>
             <li><a href="documentReady\contentLoaded.js.html">documentReady\contentLoaded.js</a></li>
             <li><a href="documentReady\documentReady.js.html">documentReady\documentReady.js</a></li>
             <li><a href="domConstruct\domConstruct.js.html">domConstruct\domConstruct.js</a></li>
             <li><a href="envConfig\Config.js.html">envConfig\Config.js</a></li>
             <li><a href="events\Events.js.html">events\Events.js</a></li>
-            <li class="active"><a href="functionSync\parallel.js.html">functionSync\parallel.js</a></li>
+            <li><a href="functionSync\parallel.js.html">functionSync\parallel.js</a></li>
             <li><a href="jsonp\jsonp.js.html">jsonp\jsonp.js</a></li>
             <li><a href="jsonp\param.js.html">jsonp\param.js</a></li>
             <li><a href="logger\logger.js.html">logger\logger.js</a></li>
@@ -90,17 +90,17 @@
           </ul>
           <div class="scrollspy">
             <ul class="nav nav-list bs-docs-sidenav affix-top">
-              <li><a href="#parallel"><i class="alert alert-info"></i><span>parallel</span></a>
+              <li><a href="#padTo2"><i class="alert alert-info"></i><span>padTo2</span></a>
               </li>
             </ul>
           </div>
         </div>
         <div class="span9">
-          <section id="parallel">
-            <h1>parallel</h1>
+          <section id="padTo2">
+            <h1>padTo2</h1>
             <h5 class="subheader"></h5>
             <p>
-              <div class="label label-info radius ctx-type">function</div><span>parallel()</span>
+              <div class="label label-info radius ctx-type">function</div><span>padTo2()</span> -><span>String Number</span>
             </p>
           </section>
           <table class="table table-bordered table-striped">
@@ -113,92 +113,120 @@
             </thead>
             <tbody>
               <tr>
-                <td>functions</td>
-                <td>Object</td>
-                <td>Object with named functions (key-value pairs) that should be executed and synced.</td>
-              </tr>
-              <tr>
-                <td>finalCallback</td>
-                <td>Function</td>
-                <td>Callback that is called when all functions finished their job. It also gets a parameter which aggregates data from all functions.</td>
+                <td>number</td>
+                <td>Number</td>
+                <td>Number which should be pad to 2 characters.</td>
               </tr>
             </tbody>
           </table>
-          <div class="description"><p>This submodule is meant to generate a callback only when all functions provided finished their execution.<br />This is achieved by passing a callback as parameter to the functions that are executed.</p> </div>
-          <pre><code class="language-javascript">function parallel (functions, finalCallback) {
+          <div class="description"><p>Pad number to 2 characters.</p> </div>
+          <pre><code class="language-javascript">function padTo2 (number) {
     &quot;use strict&quot;;
 
-    var key;
-
-    var done = false;
-    var dataAggregate = {};
-
-    var status = {};
-
-    for (key in functions) {
-        if (functions.hasOwnProperty(key)) {
-            status[key] = false;
-        }
+    if (number &lt; 10) {
+        return '0' + number;
     }
-
-    var verify = function () {
-        var statusKey;
-
-        for (statusKey in status) {
-            if (status.hasOwnProperty(statusKey)) {
-                if (!status[statusKey]) {
-                    return false;
-                }
-            }
-        }
-
-        if (!done) {
-            finalCallback(null, dataAggregate);
-        }
-    };
-
-
-    var callTheFunction = function (_key) {
-        var thisCallbackDone = function (err, data) {
-            if (!done) {
-                if (err) {
-                    done = true;
-
-                    finalCallback({
-                        key: _key,
-                        error: err
-                    });
-                    return;
-                }
-
-                status[_key] = true;
-                dataAggregate[_key] = data;
-
-                verify();
-            }
-        };
-
-        if (typeof functions[_key] === 'function') {
-            functions[_key](thisCallbackDone);
-        } else if (typeof functions[_key] === 'object' &amp;&amp; typeof functions[_key].func === 'function') {
-            if (functions[_key].hasOwnProperty('args')) {
-                var args = functions[_key].args;
-                args.splice(0, 1, thisCallbackDone);
-
-                functions[_key].func.apply(this, args);
-            } else {
-                functions[_key].func(thisCallbackDone);
-            }
-        }
-    };
-
-    for (key in functions) {
-        if (functions.hasOwnProperty(key)) {
-            callTheFunction(key);
-        }
-    }
+    return number;
 }
-module.exports = parallel;</code></pre>
+
+var date = {</code></pre>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>timestampOrDate</td>
+                <td>Date,String,Number</td>
+                <td>Can be Date, string which is compatible with the constructor of Date, or a timestamp.</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Converts a date in any format to a timestamp in milliseconds.</p> </div>
+          <pre><code class="language-javascript">toTimestamp: function (timestampOrDate) {
+        &quot;use strict&quot;;
+        
+        if (timestampOrDate instanceof Date) {
+            return timestampOrDate.getTime();
+        }
+
+        if (typeof timestampOrDate === &quot;string&quot;) {
+            return new Date(timestampOrDate).getTime();
+        }
+
+        if (timestampOrDate.toString().length &lt; 13) {
+            return timestampOrDate * 1000;
+        } else {
+            return timestampOrDate;
+        }
+    },</code></pre>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>timestampOrDate</td>
+                <td>Date,String,Number</td>
+                <td>Can be Date, string which is compatible with the constructor of Date, or a timestamp.</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Converts a date in any format to a JS Date Object.</p> </div>
+          <pre><code class="language-javascript">toDateObject: function (timestampOrDate) {
+        &quot;use strict&quot;;
+        
+        if (timestampOrDate instanceof Date) {
+            return timestampOrDate;
+        }
+
+        return new Date(date.toTimestamp(timestampOrDate));
+    },</code></pre>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>timestampOrDate</td>
+                <td>Date,String,Number</td>
+                <td>Can be Date, string which is compatible with the constructor of Date, or a timestamp.</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Shim of Date.toISOString JS function for older browsers. Converts a date to the ISO format.</p> </div>
+          <pre><code class="language-javascript">toISOString: function (timestampOrDate) {
+        &quot;use strict&quot;;
+
+        var dateObj = date.toDateObject(timestampOrDate);
+
+        if (dateObj.hasOwnProperty('toISOString')) {
+            return dateObj.toISOString();
+        } else {
+            return dateObj.getUTCFullYear() +
+                '-' + padTo2(dateObj.getUTCMonth() + 1) +
+                '-' + padTo2(dateObj.getUTCDate()) +
+                'T' + padTo2(dateObj.getUTCHours()) +
+                ':' + padTo2(dateObj.getUTCMinutes()) +
+                ':' + padTo2(dateObj.getUTCSeconds()) +
+                '.' + (dateObj.getUTCMilliseconds() / 1000).toFixed(3).slice(2, 5) +
+                'Z';
+        }
+    }
+};
+exports.date = date;</code></pre>
         </div>
       </div>
     </div>
