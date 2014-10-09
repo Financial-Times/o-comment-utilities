@@ -75,4 +75,4 @@ var date = {
         }
     }
 };
-exports.date = date;
+module.exports = date;
