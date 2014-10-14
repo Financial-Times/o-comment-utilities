@@ -71,7 +71,7 @@
       <div class="row">
         <div class="span3 bs-docs-sidebar">
           <ul class="nav nav-list bs-docs-sidenav affix-top">
-            <li class="active"><a href="index.html">Main</a></li>
+            <li><a href="index.html">Main</a></li>
             <li><a href="date\dateHelper.js.html">date\dateHelper.js</a></li>
             <li><a href="documentReady\contentLoaded.js.html">documentReady\contentLoaded.js</a></li>
             <li><a href="documentReady\documentReady.js.html">documentReady\documentReady.js</a></li>
@@ -83,7 +83,7 @@
             <li><a href="jsonp\param.js.html">jsonp\param.js</a></li>
             <li><a href="logger\logger.js.html">logger\logger.js</a></li>
             <li><a href="main.js.html">main.js</a></li>
-            <li><a href="merge\merge.js.html">merge\merge.js</a></li>
+            <li class="active"><a href="merge\merge.js.html">merge\merge.js</a></li>
             <li><a href="scriptLoader\scriptLoader.js.html">scriptLoader\scriptLoader.js</a></li>
             <li><a href="storageWrapper\localStorage.js.html">storageWrapper\localStorage.js</a></li>
             <li><a href="storageWrapper\sessionStorage.js.html">storageWrapper\sessionStorage.js</a></li>
@@ -91,232 +91,76 @@
           </ul>
           <div class="scrollspy">
             <ul class="nav nav-list bs-docs-sidenav affix-top">
+              <li><a href="#merge"><i class="alert alert-info"></i><span>merge</span></a>
+              </li>
             </ul>
           </div>
         </div>
         <div class="span9">
-          <section id="Main"><h1 id="comment-utilities">comment-utilities</h1>
-<hr>
-<h2 id="how-to-use-it">How to use it</h2>
-<p>There are two ways of using this module:</p>
-<h3 id="standalone">Standalone</h3>
-<p>Run <code>grunt</code>, then insert the JS found in the dist folder:</p>
-<pre><code class="lang-javascript">&lt;script src=&quot;dist/javascripts/commentUtilities.min.js&quot;&gt;&lt;/script&gt;</code></pre>
-<p>The module&#39;s API can be accessed using <code>commentUtilities</code> in the global scope.</p>
-<h3 id="bower-and-browserify">Bower and browserify</h3>
-<p>With bower, simply require the module:</p>
-<pre><code class="lang-javascript">var commentUtilities = require(&#39;comment-utilities&#39;);</code></pre>
-<p>The module should be built using <code>browserify</code> (with <code>debowerify</code> transform).</p>
-<hr>
-<h2 id="submodules">Submodules</h2>
-<h3 id="envconfig">envConfig</h3>
-<p>This module provides a useful way to handle application level configurations. It supports setting and reading configurations, also overriding existing values (helpful when the application should be working on different environments with partially different configuration).</p>
-<h4 id="constructor">Constructor</h4>
-<p>In order to create a configuration, you should create an instance first:</p>
-<pre><code class="lang-javascript">var config1 = new commentUtilities.EnvConfig();</code></pre>
-<p>In order to keep an isolated configuration object of your application, which is accessible within your whole application, the following method can be used:</p>
-<ul>
-<li>define a config.js file within your application</li>
-<li>create an instance of config.js and expose it within the application:</li>
-</ul>
-<pre><code class="lang-javascript">var EnvConfig = require(&#39;js-env-config&#39;);
+          <section id="merge">
+            <h1>merge</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">function</div><span>merge()</span> -><span>object</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>destination</td>
+                <td>object</td>
+                <td>The object to which the source objects will be merged</td>
+              </tr>
+              <tr>
+                <td>source</td>
+                <td>object</td>
+                <td>Any number of further arguments which are sources and will be merged to the destination.</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Merges two or more objects into a single object. It either overrides if the key is the same, or appends to the existing object.<br />The first parameter is the destination, all the other parameters are the sources.<br />The level of importance increases starting from the destination to the last source (the last source will be the most important).</p> </div>
+          <pre><code class="language-javascript">function merge (destination) {
+    &quot;use strict&quot;;
 
-module.exports = new EnvConfig();</code></pre>
-<h4 id="methods">Methods</h4>
-<h6 id="get">get</h6>
-<p>Gets the whole configuration if without parameter, or a field if a field is given as parameter.</p>
-<p>Getting the whole configuration object:</p>
-<pre><code class="lang-javascript">config.get();</code></pre>
-<p>Getting a field of the configuration object:</p>
-<pre><code class="lang-javascript">config.get(&#39;aField&#39;);</code></pre>
-<h6 id="set">set</h6>
-<p>Sets the configuration. The current configuration is merged with this object. Existing fields that have primitive type values and the same field has value in the object given to set, are overwritten.</p>
-<p>Setting an object:</p>
-<pre><code class="lang-javascript">config.set({
-    &#39;configField&#39;: &#39;value&#39;
-});</code></pre>
-<p>Setting a key/value:</p>
-<pre><code class="lang-javascript">config.set(&#39;aField&#39;, {
-    &#39;configField&#39;: &#39;value&#39;
-});</code></pre>
-<p>This is equivalent with the following object:</p>
-<pre><code class="lang-javascript">{
-    &quot;aField&quot;: {
-        &quot;configField&quot;: &quot;value&quot;
-    }
-}</code></pre>
-<h3 id="events">Events</h3>
-<p>This module helps creating custom events, listening on custom events and triggering them. It is similar to jQuery&#39;s event system (except that it doesn&#39;t support namespacing).</p>
-<h4 id="constructor">Constructor</h4>
-<p>The constructor has no parameter.</p>
-<pre><code class="lang-javascript">var myEvent = new Events();</code></pre>
-<h4 id="methods">Methods</h4>
-<h6 id="on">on</h6>
-<p>Registers a new event handler to an event.</p>
-<pre><code class="lang-javascript">myEvent.on(event, handler)</code></pre>
-<p>Where:</p>
-<ul>
-<li>event: name of the event</li>
-<li>handler: function which is called when the event is triggered. The handler can receive parameters if the trigger was made with data to be forwarded to handlers.</li>
-</ul>
-<h6 id="one">one</h6>
-<p>Registers a new event handler to an event. Similar to &#39;on&#39;, but the handler is called only once.</p>
-<pre><code class="lang-javascript">myEvent.one(event, handler)</code></pre>
-<h6 id="off">off</h6>
-<p>Removes one or more event handlers.</p>
-<pre><code class="lang-javascript">myEvent.off(event, handler)</code></pre>
-<p>Where:</p>
-<ul>
-<li>event: name of the event from which the handler should be removed.</li>
-<li>handler: handler function that will be removed.</li>
-</ul>
-<p>If handler is omitted, all event handlers from the event specified are removed.<br>If both event and handler are omitted, all event handlers are removed.</p>
-<h6 id="trigger">trigger</h6>
-<p>Triggers an event: it causes calling all the event handlers that are listening for the event name.</p>
-<pre><code class="lang-javascript">myEvent.trigger(event, customData)</code></pre>
-<p>Where:</p>
-<ul>
-<li>event: name of the event for which the handlers should be called.</li>
-<li>customData: optional parameter, data to be passed to the event handlers.</li>
-</ul>
-<h3 id="jsonp">jsonp</h3>
-<p>This module provides a similar solution for JSONP communication as jQuery. For more information on JSONP, visit <a href="http://json-p.org/">http://json-p.org/</a> .</p>
-<p>The module is actually a single function. It should be called the following way:</p>
-<pre><code>commentUtilitis.jsonp({
-    url: &quot;URL here&quot;,
-    data: &quot;Data here&quot; //optional
-}, function (err, data) {
-    if (err) {
-        throw err;
+    var i,
+        ln = arguments.length,
+        mergeFn = merge,
+        object, key, value;
+
+    for (i = 1; i &lt; ln; i++) {
+        object = arguments[i];
+
+        for (key in object) {
+            if (object.hasOwnProperty(key)) {
+                value = object[key];
+
+                if (value !== null &amp;&amp; typeof value !== 'undefined') {
+                    if (typeof destination[key] === 'undefined') {
+                        destination[key] = value;
+                    } else if (destination[key].constructor !== Object) {
+                        destination[key] = value;
+                    } else {
+                        if (value.constructor !== Object) {
+                            destination[key] = value;
+                        } else {
+                            mergeFn(destination[key], value);
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    // use the data
-});</code></pre>
-<p>Both parameters (configuration object and callback) are required. Also, the configuration should contain the &#39;url&#39; field.</p>
-<h6 id="data">data</h6>
-<p>If data should be sent, it can be part of the URL directly, or can be provided as the data field within the configuration object. The data field should be an object with key-value pairs.</p>
-<h6 id="callback">callback</h6>
-<p>The callback has a Node.js inspired form. The first parameter is the error parameter, while the second one is the data parameter received from the server as a response.</p>
-<h3 id="scriptloader">scriptLoader</h3>
-<p>This module provides a similar solution for loading a Javascript file asynchronously as jQuery&#39;s $.getScript() (<a href="http://api.jquery.com/jquery.getscript/">http://api.jquery.com/jquery.getscript/</a>).</p>
-<p>The module is actually a single function. It can be called the following ways:</p>
-<p>1.</p>
-<pre><code>commentUtilities.scriptLoader({
-    url: &quot;URL here&quot;,
-    charset: &quot;utf-8&quot; //optional
-}, function (err) {
-    if (err) {
-        throw err;
-    }
-
-    // loaded successfully
-});</code></pre>
-<p>2.</p>
-<pre><code>commentUtilities.scriptLoader(&quot;URL here&quot;, function (err) {
-    if (err) {
-        throw err;
-    }
-
-    // loaded successfully
-});</code></pre>
-<p>Both parameters (configuration object/URL and callback) are required. Also, if the configuration is an object, it should contain the &#39;url&#39; field.</p>
-<h6 id="callback">callback</h6>
-<p>The callback has a Node.js inspired form. The parameter is either &#39;null&#39; or an Error instance. If it doesn&#39;t contain an error, the loading finished with success.</p>
-<h3 id="storagewrapper">storageWrapper</h3>
-<p>Wrapper around localStorage and sessionStorage, but enhanced with automatic type conversion.</p>
-<p>Automatic type conversion means the followin: for example, if you store an object which can be serialized into a JSON string, when you read it back you will get the same Javascript object and not just a plain string.</p>
-<p>The module exposes two main fields, both having the same API:</p>
-<pre><code class="lang-javascript">commentUtilities.storageWrapper.localStorage //wrapper around native localStorage
-commentUtilities.storageWrapper.sessionStorage //wrapper around native sessionStorage</code></pre>
-<h4 id="api-of-localstorage-and-sessionstorage">API of localStorage and sessionStorage</h4>
-<p>Both submodules has the same public API. The difference is only the place the data is saved (as it is in the native API).</p>
-<p>Available methods:</p>
-<h6 id="setitem">setItem</h6>
-<p>Saves an item in the storage. It has the following form:</p>
-<pre><code class="lang-javascript">setItem(key, value);</code></pre>
-<p>The value is saved in the storage with the key. The value can be looked up using the key provided.</p>
-<p>The item is saved in the following format:</p>
-<pre><code>{type}|{value converted/serialized to string}</code></pre>
-<p>For example, a boolean &quot;true&quot; value is saved in the following way:</p>
-<pre><code>boolean|true</code></pre>
-<p>Objects that can be serialized are saved with the type &quot;json&quot;.</p>
-<h6 id="getitem">getItem</h6>
-<p>Reads the item and returns it in the original type that was saved.</p>
-<pre><code class="lang-javascript">getItem(key);</code></pre>
-<p>For example, if a boolean true was saved, it is not returned as a string, but as a boolean type.</p>
-<h6 id="hasitem">hasItem</h6>
-<p>Returns true or false and it says if there is an item with that key.</p>
-<pre><code class="lang-javascript">hasItem(key);</code></pre>
-<h6 id="removeitem">removeItem</h6>
-<p>Removes the item saved with the key provided.</p>
-<pre><code class="lang-javascript">removeItem(key);</code></pre>
-<h6 id="clear">clear</h6>
-<p>Clears all entries for the current domain.</p>
-<h6 id="native">native</h6>
-<p>Returns the native localStorage or sessionStorage object.</p>
-<h3 id="logger">logger</h3>
-<p>Logging helper which uses the native &quot;console&quot; to log. It also extends IE8 logging capabilities by stringifying complex objects.</p>
-<p>Where console is not available, the logger fails silently.</p>
-<p>The module supports the following methods:</p>
-<h4 id="logger-configuration">Logger configuration</h4>
-<p>The logger can be configured with the following: enable/disable, set the minimum level that is logged.</p>
-<p>By default is logging disabled (recommended settings for production).<br>Default level of logging is &#39;warn&#39;.</p>
-<h6 id="enable">enable</h6>
-<p>Enables the logging.</p>
-<pre><code class="lang-javascript">logger.enable();</code></pre>
-<h6 id="disable">disable</h6>
-<p>Disables the logging.</p>
-<pre><code class="lang-javascript">logger.disable();</code></pre>
-<h6 id="setlevel">setLevel</h6>
-<p>Sets the minimum level that should be logged. The levels are the following:</p>
-<ul>
-<li>debug</li>
-<li>log</li>
-<li>info</li>
-<li>warn</li>
-<li>error</li>
-</ul>
-<pre><code class="lang-javascript">logger.setLevel(level);</code></pre>
-<p>Where level can be:</p>
-<ul>
-<li>string: anything from the list above</li>
-<li>numeric: any number from the range between 0-4, where 0 means log everything (min level is debug), while 4 means log only error level logs.</li>
-</ul>
-<h4 id="logging-functions">Logging functions</h4>
-<p>Available functions:</p>
-<ul>
-<li>debug</li>
-<li>log</li>
-<li>info</li>
-<li>warn</li>
-<li>error</li>
-</ul>
-<h3 id="functionsync">functionSync</h3>
-<p>This submodule is meant to generate a callback only when all functions provided finished their execution. This is achieved by passing a callback as parameter to the functions that are executed.</p>
-<p>The submodule itself is a single function and can be called in the following way:</p>
-<pre><code class="lang-javascript">commentUtilities.functionSync({
-    func1: function (callback) {},
-    func2: function (callback) {},
-    func3: {
-        args: [&#39;param1&#39;, &#39;param2&#39;],
-        func: function (callback, param1, param2) {}
-    }
-}, function (dataAggregate) {
-    // where data aggregate is:
-    // {
-    //      func1: &#39;dataFromFunc1&#39;,
-    //      func2: &#39;dataFromFunc2&#39;,
-    //      func2: &#39;dataFromFunc2&#39;
-    // }
+    return destination;
 }
-});</code></pre>
-<p>Functions provided within the object can be in the following forms:</p>
-<ol>
-<li>Single function. As example are func1 and func2.</li>
-<li>Object with the following fields: func is the actual function that will be called, args are the arguments that are appended after the callback parameter.</li>
-</ol>
-<p>For more information on the technical side, please visit the detailed documentation (docs/index.html).</p>
-</section>
+module.exports = merge;</code></pre>
         </div>
       </div>
     </div>

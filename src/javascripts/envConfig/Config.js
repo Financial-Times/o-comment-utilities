@@ -1,4 +1,4 @@
-var merge = require('js-merge');
+var merge = require('../merge/merge.js');
 
 /**
  * Config class which can be instantiated. It will create an isolated set of configuration options.
