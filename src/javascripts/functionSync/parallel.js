@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * This submodule is meant to generate a callback only when all functions provided finished their execution.
  * This is achieved by passing a callback as parameter to the functions that are executed.
@@ -6,8 +8,6 @@
  * @param  {Function} finalCallback Callback that is called when all functions finished their job. It also gets a parameter which aggregates data from all functions.
  */
 function parallel (functions, finalCallback) {
-    "use strict";
-
     var key;
 
     var done = false;

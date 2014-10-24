@@ -1,11 +1,11 @@
+"use strict";
+
 /**
  * Pad number to 2 characters.
  * @param  {Number} number Number which should be pad to 2 characters.
  * @return {String|Number} The number in 2 characters.
  */
 function padTo2 (number) {
-    "use strict";
-
     if (number < 10) {
         return '0' + number;
     }
@@ -19,8 +19,6 @@ var date = {
      * @return {Number} Timestamp in milliseconds
      */
     toTimestamp: function (timestampOrDate) {
-        "use strict";
-        
         if (timestampOrDate instanceof Date) {
             return timestampOrDate.getTime();
         }
@@ -42,8 +40,6 @@ var date = {
      * @return {Date} Date object
      */
     toDateObject: function (timestampOrDate) {
-        "use strict";
-        
         if (timestampOrDate instanceof Date) {
             return timestampOrDate;
         }
@@ -57,9 +53,7 @@ var date = {
      * @return {String} Date in ISO format.
      */
     toISOString: function (timestampOrDate) {
-        "use strict";
-
-        var dateObj = date.toDateObject(timestampOrDate);
+            var dateObj = date.toDateObject(timestampOrDate);
 
         if (dateObj.hasOwnProperty('toISOString')) {
             return dateObj.toISOString();

@@ -1,3 +1,5 @@
+"use strict";
+
 var merge = require('../merge/merge.js');
 
 /**
@@ -5,8 +7,6 @@ var merge = require('../merge/merge.js');
  * It can be extended and read.
  */
 function Config () {
-    "use strict";
-
     /**
      * Local object of the configuration.
      * @type {Object}

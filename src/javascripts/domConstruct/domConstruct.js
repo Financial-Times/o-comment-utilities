@@ -1,16 +1,14 @@
+"use strict";
+    
 var documentReady = require('../documentReady/documentReady.js');
 var sizzle = require('sizzle');
 
 var isDocumentReady = false;
 documentReady(function () {
-    "use strict";
-    
     isDocumentReady = true;
 });
 
 module.exports = function (Widget, baseClass) {
-    "use strict";
-
     var parseDom = function () {
         var instances = sizzle('.' + baseClass);
 

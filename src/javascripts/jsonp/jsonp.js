@@ -1,3 +1,5 @@
+"use strict";
+
 var param = require('./param.js'),
     scriptLoader = require('../scriptLoader/scriptLoader.js');
 
@@ -10,8 +12,6 @@ var callbackIndex = 0,
  * @param  {Function} callback function (err, data)
  */
 function jsonp (options, callback) {
-    "use strict";
-
     var callbackName, callbackIssued, callbackCalled,
         success, error;
 

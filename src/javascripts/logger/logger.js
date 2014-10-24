@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Levels of logs.
  * @type {Array}
@@ -22,8 +24,6 @@ var enabled = false;
  * @return {number} Numeric representation of the log level e.g. 3
  */
 var levelIndex = function (level) {
-    "use strict";
-
     if (typeof Array.prototype.indexOf === 'function') {
         return levels.indexOf(level);
     } else {
@@ -49,7 +49,7 @@ var levelIndex = function (level) {
  * @return {function} function (level, args)
  */
 var loggerFunction = (function () {
-    "use strict";
+    var console = window.console;
 
     if (typeof console !== 'undefined' && typeof console.log !== 'undefined') {
         return function (level, args) {
@@ -81,8 +81,6 @@ var loggerFunction = (function () {
  * @param  {any} args Any number of arguments of any type
  */
 exports.debug = (function () {
-    "use strict";
-
     var level = levelIndex('debug');
     return function () {
         loggerFunction(level, Array.prototype.slice.apply(arguments));
@@ -94,8 +92,6 @@ exports.debug = (function () {
  * @param  {any} args Any number of arguments of any type
  */
 exports.log = (function () {
-    "use strict";
-    
     var level = levelIndex('log');
     return function () {
         loggerFunction(level, Array.prototype.slice.apply(arguments));
@@ -107,8 +103,6 @@ exports.log = (function () {
  * @param  {any} args Any number of arguments of any type
  */
 exports.info = (function () {
-    "use strict";
-    
     var level = levelIndex('info');
     return function () {
         loggerFunction(level, Array.prototype.slice.apply(arguments));
@@ -120,8 +114,6 @@ exports.info = (function () {
  * @param  {any} args Any number of arguments of any type
  */
 exports.warn = (function () {
-    "use strict";
-    
     var level = levelIndex('warn');
     return function () {
         loggerFunction(level, Array.prototype.slice.apply(arguments));
@@ -133,8 +125,6 @@ exports.warn = (function () {
  * @param  {any} args Any number of arguments of any type
  */
 exports.error = (function () {
-    "use strict";
-    
     var level = levelIndex('error');
     return function () {
         loggerFunction(level, Array.prototype.slice.apply(arguments));
@@ -145,7 +135,6 @@ exports.error = (function () {
  * Enables the logging.
  */
 exports.enable = function () {
-    "use strict";
     enabled = true;
 };
 
@@ -153,7 +142,6 @@ exports.enable = function () {
  * Disables the logging.
  */
 exports.disable = function () {
-    "use strict";
     enabled = false;
 };
 
@@ -162,7 +150,6 @@ exports.disable = function () {
  * @param {number|string} level Either a numeric (0-4) or string (debug, log, info, warn, error) representation of the level.
  */
 exports.setLevel = function (level) {
-    "use strict";
     if (typeof level === 'string') {
         if (isNaN(parseInt(level, 10))) {
             if (levelIndex(level) !== -1) {

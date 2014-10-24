@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Is storage supported?
  * @type {Boolean}
@@ -25,8 +27,6 @@ if (storageOk) {
      * - session or sessionStorage
      */
     StorageWrapper = function (type) {
-        "use strict";
-
         var storageObj;
 
         if (type === 'local' || type === 'localStorage') {
@@ -163,8 +163,6 @@ if (storageOk) {
  */
 } else {
     StorageWrapper = function () {
-        "use strict";
-
         this.setItem = function () {
             return false;
         };

@@ -1,10 +1,10 @@
+"use strict";
+
 /**
  * When instantiated, it creates an isolated event collection.
  * These events can be handled and triggered using the resulted object.
  */
 function Events () {
-    "use strict";
-
     var self = this;
 
     /**

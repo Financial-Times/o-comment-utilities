@@ -18,7 +18,6 @@
 // @win window reference
 // @fn function reference
 function contentLoaded(win, fn) {
-
     var done = false, top = true,
 
     doc = win.document,

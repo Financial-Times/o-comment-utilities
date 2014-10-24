@@ -1,11 +1,11 @@
+"use strict";
+
 /**
  * Data object transformation into query string.
  * @param  {object} data Object to be transformed into a query string.
  * @return {string}      Query string.
  */
 function param (data) {
-    "use strict";
-
     var dataArr = [],
         add = function( key, value ) {
             value = (typeof value === 'function') ? value() : ( value === null ? "" : value );

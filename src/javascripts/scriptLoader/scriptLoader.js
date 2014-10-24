@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Reference to the &lt;head&gt; DOM object
  * @type {Object}
@@ -10,8 +12,6 @@ var head = document.head || document.getElementsByTagName('head')[0];
  * @param  {Function} callback function (err)
  */
 function scriptLoader (options, callback) {
-    "use strict";
-
     var script, callbackIssued,
         error, success,
         url,
