@@ -10,7 +10,6 @@ exports.logger = require('./src/javascripts/logger/logger.js');
 exports.functionSync = {
     parallel: require('./src/javascripts/functionSync/parallel.js')
 };
-exports.documentReady = require('./src/javascripts/documentReady/documentReady.js');
 exports.initDomConstruct = require('./src/javascripts/domConstruct/domConstruct.js');
 exports.dateHelper = require('./src/javascripts/date/dateHelper.js');
 exports.merge = require('./src/javascripts/merge/merge.js');
