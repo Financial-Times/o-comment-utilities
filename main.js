@@ -16,4 +16,5 @@ exports.merge = require('./src/javascripts/merge/merge.js');
 exports.dom = {
 	ScrollMonitor: require('./src/javascripts/dom/ScrollMonitor.js'),
 	eventListener: require('./src/javascripts/dom/eventListener.js'),
+	offset: require('./src/javascripts/dom/offset.js')
 };
