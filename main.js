@@ -13,3 +13,7 @@ exports.functionSync = {
 exports.initDomConstruct = require('./src/javascripts/domConstruct/domConstruct.js');
 exports.dateHelper = require('./src/javascripts/date/dateHelper.js');
 exports.merge = require('./src/javascripts/merge/merge.js');
+exports.dom = {
+	ScrollMonitor: require('./src/javascripts/dom/ScrollMonitor.js'),
+	eventListener: require('./src/javascripts/dom/eventListener.js'),
+};
