@@ -14,26 +14,41 @@ function ScrollMonitor (el, callback) {
 
 
 	var lastTime = 0;
-	var throttle = 300;
+	var throttle = 200;
 	var scrollPosition;
+	var lastScrollPosition;
+	var lastScrollPositionCheck;
 	var i;
 
+	function onValidScroll (force) {
+		if (elToReadPosition instanceof Array) {
+			scrollPosition = 0;
+			for (i = 0; i < elToReadPosition.length; i++) {
+				if (elToReadPosition[i].scrollTop > 0) {
+					scrollPosition = elToReadPosition[i].scrollTop;
+				}
+			}
+		} else {
+			scrollPosition = elToReadPosition.scrollTop;
+		}
+
+		if (force || lastScrollPosition !== scrollPosition) {
+			callback(scrollPosition);
+		}
+		lastScrollPosition = scrollPosition;
+	}
+
+
 	function onScroll () {
+		clearTimeout(lastScrollPositionCheck);
+		lastScrollPositionCheck = setTimeout(function () {
+			onValidScroll();
+		}, throttle);
+
 		if (new Date().getTime() - lastTime > throttle) {
 			lastTime = new Date().getTime();
 
-			if (elToReadPosition instanceof Array) {
-				scrollPosition = 0;
-				for (i = 0; i < elToReadPosition.length; i++) {
-					if (elToReadPosition[i].scrollTop > 0) {
-						scrollPosition = elToReadPosition[i].scrollTop;
-					}
-				}
-			} else {
-				scrollPosition = elToReadPosition.scrollTop;
-			}
-
-			callback(scrollPosition);
+			onValidScroll(true);
 		}
 	}
 
