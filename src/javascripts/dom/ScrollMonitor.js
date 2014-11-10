@@ -3,8 +3,11 @@
 var eventListener = require('./eventListener.js');
 
 function ScrollMonitor (el, callback) {
-	if (el === document.body || el === document.getElementsByTagName('html')[0]) {
-		el = [document.body, document.getElementsByTagName('html')[0]];
+	var elToListen = el;
+	var elToReadPosition = el;
+	if (el === document.body || el === document.getElementsByTagName('html')[0] || window) {
+		elToReadPosition = [document.body, document.getElementsByTagName('html')[0]];
+		elToListen = window;
 	}
 
 	var started = false;
@@ -19,15 +22,15 @@ function ScrollMonitor (el, callback) {
 		if (new Date().getTime() - lastTime > throttle) {
 			lastTime = new Date().getTime();
 
-			if (el instanceof Array) {
+			if (elToReadPosition instanceof Array) {
 				scrollPosition = 0;
-				for (i = 0; i < el.length; i++) {
-					if (el[i].scrollTop > 0) {
-						scrollPosition = el[i].scrollTop;
+				for (i = 0; i < elToReadPosition.length; i++) {
+					if (elToReadPosition[i].scrollTop > 0) {
+						scrollPosition = elToReadPosition[i].scrollTop;
 					}
 				}
 			} else {
-				scrollPosition = el.scrollTop;
+				scrollPosition = elToReadPosition.scrollTop;
 			}
 
 			callback(scrollPosition);
@@ -38,7 +41,7 @@ function ScrollMonitor (el, callback) {
 		if (!started) {
 			started = true;
 
-			eventListener.addEventListener('scroll', el, onScroll);
+			eventListener.addEventListener('scroll', elToListen, onScroll);
 		}
 	};
 
@@ -46,7 +49,7 @@ function ScrollMonitor (el, callback) {
 		if (started) {
 			started = false;
 			
-			eventListener.removeEventListener('scroll', el, onScroll);
+			eventListener.removeEventListener('scroll', elToListen, onScroll);
 		}
 	};
 
