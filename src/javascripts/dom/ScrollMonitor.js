@@ -5,7 +5,7 @@ var eventListener = require('./eventListener.js');
 function ScrollMonitor (el, callback) {
 	var elToListen = el;
 	var elToReadPosition = el;
-	if (el === document.body || el === document.getElementsByTagName('html')[0] || window) {
+	if (el === document.body || el === document.getElementsByTagName('html')[0] || el === window) {
 		elToReadPosition = [document.body, document.getElementsByTagName('html')[0]];
 		elToListen = window;
 	}
