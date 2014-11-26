@@ -380,3 +380,60 @@ Functions provided within the object can be in the following forms:
 
 
 For more information on the technical side, please visit the detailed documentation (docs/index.html).
+
+### domConstruct
+This module is able to instantiate classes extended from o-comment-ui/Widget.js using markup in the DOM.
+
+#### How to use it
+This feature reads the DOM for certain types of elements. An example element:
+
+```html
+<div class="o-chat" id="commentWidget" data-o-chat-autoconstruct="true" data-o-chat-config-title="o-chat-test-closed3" data-o-chat-config-url="http://ftalphaville.ft.com/marketslive-test.html" data-o-chat-config-articleId="marketslive-test" data-o-chat-config-order="inverted"></div>
+```
+
+Key parts of the DOM element:
+
+ - class: defines the type of Widget element, in this example `o-chat`.
+ - id: this is needed to uniquely identify the DOM element.
+ - data-o-chat-autoconstruct="true": enables auto-construction of a Widget element, based on the information stored on the DOM element
+ - data attributes: configuration options that are passed to the Widget constructor
+
+
+In order to start the DOM construction, the `oCommentUtilities.initDomConstruct` function should be called with a configuration object, which has the following fields:
+
+ - baseClass: type of the Widget element, in the example above it would be a string `'o-chat'`. It is used as class and also as part of the data attributes.
+ - namespace: according to the origami spec, all events generated should be namespaced with the module's name, without dashes, but with camel case. In the example above namespace would be a string `'oChat'`.
+ - Widget: reference to a Widget element which will be instantiated (e.g. new Widget). In the example above this would be the object `oChat.Widget`.
+ - module: reference to the global scope of the module. In the example above this would be the object `oChat`.
+
+
+Example: 
+
+```javascript
+oCommentUtilities.initDomConstruct({
+    baseClass: 'o-chat',
+    namespace: 'oChat',
+    module: oChat,
+    namespace: oChat.Widget
+});
+```
+
+In some cases this module should be called on demand by the product, so it could be exposed as a public API as part of the module which uses it.
+
+
+Example: (from o-chat/main.js)
+
+```javascript
+var Widget = require('./src/javascripts/Widget.js');
+
+exports.initDomConstruct = function () {
+    oCommentUtilities.initDomConstruct({
+        baseClass: 'o-chat',
+        namespace: 'oChat',
+        module: this,
+        namespace: Widget
+    });
+};
+```
+
+This way all the configurations are abstracted, the product should not care about setting them.
