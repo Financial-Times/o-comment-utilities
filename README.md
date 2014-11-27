@@ -445,7 +445,7 @@ If you want to obtain a reference of the created Widget instances, you should li
 Example:
 
 ```javascript
-document.body.addEventListener('oChat.domConstruct', function (event) {
-    //event.detail.id and event.detail.instance contains the above
+document.body.addEventListener('oChat.domConstruct', function (evt) {
+    //evt.detail.id and evt.detail.instance contains the above
 });
 ```
