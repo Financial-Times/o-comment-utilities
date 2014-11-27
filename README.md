@@ -1,6 +1,5 @@
 # comment-utilities
-
-
+A collection of helper functions used by o-comments and o-chat.
 
 ---
 
@@ -437,3 +436,16 @@ exports.initDomConstruct = function () {
 ```
 
 This way all the configurations are abstracted, the product should not care about setting them.
+
+If you want to obtain a reference of the created Widget instances, you should listen on the body to the event `{namespace}.domConstruct`, which will have the following details:
+
+ - id: ID of the widget, which is basically the ID attribute of the DOM element
+ - instance: the instance of the Widget
+
+Example:
+
+```javascript
+document.body.addEventListener('oChat.domConstruct', function (event) {
+    //event.detail.id and event.detail.instance contains the above
+});
+```
