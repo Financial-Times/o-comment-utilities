@@ -13,7 +13,7 @@ function Events () {
      */
     var events = {};
 
-    var inProgressOffTrigger = {};
+    var actionInProgress = {};
     var actionQueue = {};
 
 
@@ -31,11 +31,11 @@ function Events () {
     }
 
     function nextAction (evt) {
-        if (!inProgressOffTrigger[evt]) {
+        if (!actionInProgress[evt]) {
             var action = actionQueue[evt].shift();
 
             if (action) {
-                inProgressOffTrigger[evt] = true;
+                actionInProgress[evt] = true;
 
                 switch (action.type) {
                     case 'off':
@@ -46,7 +46,7 @@ function Events () {
                         break;
                 }
 
-                inProgressOffTrigger[evt] = false;
+                actionInProgress[evt] = false;
                 nextAction(evt);
             }
         }
@@ -197,6 +197,13 @@ function Events () {
      */
     this.trigger = function (evt) {
         queueAnAction(evt, 'trigger', arguments);
+    };
+
+
+    this.destroy = function () {
+    	events = null;
+	    actionInProgress = null;
+	    actionQueue = null;
     };
 }
 module.exports = Events;

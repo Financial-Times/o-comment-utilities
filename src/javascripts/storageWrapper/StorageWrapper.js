@@ -72,7 +72,7 @@ if (storageOk) {
                             type = "object";
                         }
                     }
-                    
+
                     break;
                 default:
                     type = "unknown";
@@ -92,7 +92,7 @@ if (storageOk) {
             var value = storageObj.getItem(key);
             if (value) {
                 var type = value.substr(0, value.indexOf("|"));
-                
+
                 value = value.substr(value.indexOf("|") + 1);
 
                 switch (type) {
@@ -104,7 +104,7 @@ if (storageOk) {
                         } else if (value === "false") {
                             return false;
                         }
-                        
+
                         return undefined;
                     case "date":
                         return new Date(value);
@@ -120,7 +120,7 @@ if (storageOk) {
                         return value;
                 }
             }
-            
+
             return undefined;
         };
 
@@ -155,6 +155,11 @@ if (storageOk) {
         this.native = function () {
             return storageObj;
         };
+
+
+        this.destroy = function () {
+
+        };
     };
 
 /**
@@ -180,6 +185,11 @@ if (storageOk) {
         };
         this.native = function () {
             return undefined;
+        };
+
+
+        this.destroy = function () {
+
         };
     };
 }

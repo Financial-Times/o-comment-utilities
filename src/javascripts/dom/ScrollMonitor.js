@@ -63,9 +63,24 @@ function ScrollMonitor (el, callback) {
 	this.stop = function () {
 		if (started) {
 			started = false;
-			
+
 			eventListener.removeEventListener('scroll', elToListen, onScroll);
 		}
+	};
+
+	this.destroy = function () {
+		this.stop();
+
+		elToListen = null;
+		elToReadPosition = null;
+
+		started = null;
+		lastTime = null;
+		throttle = null;
+		scrollPosition = null;
+		lastScrollPosition = null;
+		lastScrollPositionCheck = null;
+		i = null;
 	};
 
 	this.start.call(this);

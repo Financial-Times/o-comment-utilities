@@ -50,5 +50,9 @@ function Config () {
             config = merge(config, keyOrObject);
         }
     };
+
+    this.destroy = function () {
+    	config = null;
+    };
 }
 module.exports = Config;
