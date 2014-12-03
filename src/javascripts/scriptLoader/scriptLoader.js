@@ -12,99 +12,99 @@ var head = document.head || document.getElementsByTagName('head')[0];
  * @param  {Function} callback function (err)
  */
 function scriptLoader (options, callback) {
-    var script, callbackIssued,
-        error, success,
-        url,
-        charset;
+	var script, callbackIssued,
+		error, success,
+		url,
+		charset;
 
-    /**
-     * Parameter validation.
-     */
-    if (typeof callback !== 'function') {
-        throw "Callback not specified";
-    }
+	/**
+	 * Parameter validation.
+	 */
+	if (typeof callback !== 'function') {
+		throw "Callback not specified";
+	}
 
-    if (typeof options === 'string') {
-        // url
-        url = options;
-    } else if (options && typeof options === 'object') {
-        if (!options.url) {
-            callback(new Error("URL is not specified"));
-            return;
-        }
+	if (typeof options === 'string') {
+		// url
+		url = options;
+	} else if (options && typeof options === 'object') {
+		if (!options.url) {
+			callback(new Error("URL is not specified"));
+			return;
+		}
 
-        url = options.url;
-        if (options.charset) {
-            charset = options.charset;
-        }
-    } else {
-        callback(new Error("Configuration not specified or has the wrong type."));
-        return;
-    }
+		url = options.url;
+		if (options.charset) {
+			charset = options.charset;
+		}
+	} else {
+		callback(new Error("Configuration not specified or has the wrong type."));
+		return;
+	}
 
-    
 
-    callbackIssued = false;
 
-    error = function (e) {
-        if (!callbackIssued) {
-            callbackIssued = true;
+	callbackIssued = false;
 
-            callback(e || new Error("Timeout"));
-        }
-    };
+	error = function (e) {
+		if (!callbackIssued) {
+			callbackIssued = true;
 
-    success = function () {
-        if (!callbackIssued) {
-            callbackIssued = true;
+			callback(e || new Error("Timeout"));
+		}
+	};
 
-            callback(null);
-        }
-    };
+	success = function () {
+		if (!callbackIssued) {
+			callbackIssued = true;
 
-    script = document.createElement("script");
-    script.async = true;
+			callback(null);
+		}
+	};
 
-    if (charset) {
-        script.charset = charset;
-    }
+	script = document.createElement("script");
+	script.async = true;
 
-    script.src = url;
+	if (charset) {
+		script.charset = charset;
+	}
 
-    var destroy = function () {
-        if (script) {
-            // Handle memory leak in IE
-            script.onload = script.onreadystatechange = null;
+	script.src = url;
 
-            // Remove the script
-            if ( script.parentNode ) {
-                script.parentNode.removeChild( script );
-            }
+	var destroy = function () {
+		if (script) {
+			// Handle memory leak in IE
+			script.onload = script.onreadystatechange = null;
 
-            // Dereference the script
-            script = null;
-        }
-    };
+			// Remove the script
+			if ( script.parentNode ) {
+				script.parentNode.removeChild( script );
+			}
 
-    script.onload = script.onreadystatechange = function( _, isAbort ) {
-        if ( isAbort || !script.readyState || /loaded|complete/.test( script.readyState ) ) {
-            destroy();
+			// Dereference the script
+			script = null;
+		}
+	};
 
-            if (isAbort) {
-                error();
-                return;
-            }
+	script.onload = script.onreadystatechange = function( _, isAbort ) {
+		if ( isAbort || !script.readyState || /loaded|complete/.test( script.readyState ) ) {
+			destroy();
 
-            success();
-        }
-    };
+			if (isAbort) {
+				error();
+				return;
+			}
 
-    script.onerror = function (e) {
-        destroy();
-        error(e);
-    };
+			success();
+		}
+	};
 
-    head.insertBefore( script, head.firstChild );
+	script.onerror = function (e) {
+		destroy();
+		error(e);
+	};
+
+	head.insertBefore( script, head.firstChild );
 }
 
 module.exports = scriptLoader;

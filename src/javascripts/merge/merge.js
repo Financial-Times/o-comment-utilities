@@ -10,35 +10,35 @@
  * @return {object} The modified destination object with the sources merged in.
  */
 function merge (destination) {
-    var i,
-        ln = arguments.length,
-        mergeFn = merge,
-        object, key, value;
+	var i,
+		ln = arguments.length,
+		mergeFn = merge,
+		object, key, value;
 
-    for (i = 1; i < ln; i++) {
-        object = arguments[i];
+	for (i = 1; i < ln; i++) {
+		object = arguments[i];
 
-        for (key in object) {
-            if (object.hasOwnProperty(key)) {
-                value = object[key];
+		for (key in object) {
+			if (object.hasOwnProperty(key)) {
+				value = object[key];
 
-                if (value !== null && typeof value !== 'undefined') {
-                    if (typeof destination[key] === 'undefined') {
-                        destination[key] = value;
-                    } else if (destination[key].constructor !== Object) {
-                        destination[key] = value;
-                    } else {
-                        if (value.constructor !== Object) {
-                            destination[key] = value;
-                        } else {
-                            mergeFn(destination[key], value);
-                        }
-                    }
-                }
-            }
-        }
-    }
+				if (value !== null && typeof value !== 'undefined') {
+					if (typeof destination[key] === 'undefined') {
+						destination[key] = value;
+					} else if (destination[key].constructor !== Object) {
+						destination[key] = value;
+					} else {
+						if (value.constructor !== Object) {
+							destination[key] = value;
+						} else {
+							mergeFn(destination[key], value);
+						}
+					}
+				}
+			}
+		}
+	}
 
-    return destination;
+	return destination;
 }
 module.exports = merge;

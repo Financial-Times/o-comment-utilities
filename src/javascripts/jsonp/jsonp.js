@@ -1,10 +1,10 @@
 "use strict";
 
 var param = require('./param.js'),
-    scriptLoader = require('../scriptLoader/scriptLoader.js');
+	scriptLoader = require('../scriptLoader/scriptLoader.js');
 
 var callbackIndex = 0,
-    callbackBase = 'jsonp_' + Math.random().toString(36).substring(7);
+	callbackBase = 'jsonp_' + Math.random().toString(36).substring(7);
 
 /**
  * The actual function which does the jsonp.
@@ -12,88 +12,88 @@ var callbackIndex = 0,
  * @param  {Function} callback function (err, data)
  */
 function jsonp (options, callback) {
-    var callbackName, callbackIssued, callbackCalled,
-        success, error;
+	var callbackName, callbackIssued, callbackCalled,
+		success, error;
 
-    /**
-     * Parameter validation.
-     */
-    if (typeof callback !== 'function') {
-        throw "Callback not specified";
-    }
+	/**
+	 * Parameter validation.
+	 */
+	if (typeof callback !== 'function') {
+		throw "Callback not specified";
+	}
 
-    if (typeof options !== 'object') {
-        callback(new Error("Configuration not specified or has the wrong type."));
-        return;
-    }
+	if (typeof options !== 'object') {
+		callback(new Error("Configuration not specified or has the wrong type."));
+		return;
+	}
 
-    if (!options.url) {
-        callback(new Error("URL is not specified"));
-        return;
-    }
+	if (!options.url) {
+		callback(new Error("URL is not specified"));
+		return;
+	}
 
 
-    callbackIssued = false;
-    callbackCalled = false;
+	callbackIssued = false;
+	callbackCalled = false;
 
-    success = function (jsonData) {
-        try {
-            delete window[callbackName];
-        } catch (e1) {
-            window[callbackName] = undefined;
-        }
+	success = function (jsonData) {
+		try {
+			delete window[callbackName];
+		} catch (e1) {
+			window[callbackName] = undefined;
+		}
 
-        if (!callbackIssued) {
-            callbackIssued = true;
+		if (!callbackIssued) {
+			callbackIssued = true;
 
-            callback(null, jsonData);
-        }
-    };
+			callback(null, jsonData);
+		}
+	};
 
-    error = function (e) {
-        try {
-            delete window[callbackName];
-        } catch (e2) {
-            window[callbackName] = undefined;
-        }
+	error = function (e) {
+		try {
+			delete window[callbackName];
+		} catch (e2) {
+			window[callbackName] = undefined;
+		}
 
-        if (!callbackIssued) {
-            callbackIssued = true;
+		if (!callbackIssued) {
+			callbackIssued = true;
 
-            callback(e || new Error("Timeout"));
-        }
-    };
+			callback(e || new Error("Timeout"));
+		}
+	};
 
-    callbackName = callbackBase + callbackIndex++;
-    
-    if (options.data) {
-        options.url += '?' + param(options.data);
+	callbackName = callbackBase + callbackIndex++;
 
-        options.url += '&callback=' + callbackName;
-    } else {
-        options.url += '?callback=' + callbackName;
-    }
+	if (options.data) {
+		options.url += '?' + param(options.data);
 
-    options.url += '&_=' + new Date().getTime();
+		options.url += '&callback=' + callbackName;
+	} else {
+		options.url += '?callback=' + callbackName;
+	}
 
-    window[callbackName] = function (jsonData) {
-        callbackCalled = true;
+	options.url += '&_=' + new Date().getTime();
 
-        success(jsonData);
-    };
+	window[callbackName] = function (jsonData) {
+		callbackCalled = true;
 
-    scriptLoader(options, function (err) {
-        if (err) {
-            error(err);
-            return;
-        }
+		success(jsonData);
+	};
 
-        setTimeout(function () {
-            if (!callbackCalled) {
-                error();
-            }
-        }, 50);
-    });
+	scriptLoader(options, function (err) {
+		if (err) {
+			error(err);
+			return;
+		}
+
+		setTimeout(function () {
+			if (!callbackCalled) {
+				error();
+			}
+		}, 50);
+	});
 }
 
 module.exports = jsonp;
