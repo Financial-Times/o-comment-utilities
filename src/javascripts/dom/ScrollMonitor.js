@@ -1,7 +1,5 @@
 "use strict";
 
-var eventListener = require('./eventListener.js');
-
 function ScrollMonitor (el, callback) {
 	var elToListen = el;
 	var elToReadPosition = el;
@@ -56,7 +54,7 @@ function ScrollMonitor (el, callback) {
 		if (!started) {
 			started = true;
 
-			eventListener.addEventListener('scroll', elToListen, onScroll);
+			elToListen.addEventListener('scroll', onScroll);
 		}
 	};
 
@@ -64,7 +62,7 @@ function ScrollMonitor (el, callback) {
 		if (started) {
 			started = false;
 
-			eventListener.removeEventListener('scroll', elToListen, onScroll);
+			elToListen.removeEventListener('scroll', onScroll);
 		}
 	};
 
