@@ -1,6 +1,6 @@
 {
 	"name": "o-comment-utilities",
-	"version": "0.4.2",
+	"version": "0.4.3",
 	"main": "main.js",
 	"dependencies": {
 		"sizzle": "https://github.com/jquery/sizzle.git#^2.0.0"
