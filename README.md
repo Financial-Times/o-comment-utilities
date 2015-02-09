@@ -1,4 +1,4 @@
-# comment-utilities
+# o-comment-utilities
 A collection of helper functions used by o-comments and o-chat.
 
 ---
@@ -10,16 +10,16 @@ There are two ways of using this module:
 Run `grunt`, then insert the JS found in the dist folder:
 
 ```javascript
-<script src="dist/javascripts/commentUtilities.min.js"></script>
+<script src="dist/javascripts/oCommentUtilities.min.js"></script>
 ```
 
-The module's API can be accessed using `commentUtilities` in the global scope.
+The module's API can be accessed using `oCommentUtilities` in the global scope.
 
 ### Bower and browserify
 With bower, simply require the module:
 
 ```javascript
-var commentUtilities = require('comment-utilities');
+var oCommentUtilities = require('o-comment-utilities');
 ```
 
 The module should be built using `browserify` (with `debowerify` transform).
@@ -35,7 +35,7 @@ This module provides a useful way to handle application level configurations. It
 In order to create a configuration, you should create an instance first:
 
 ```javascript
-var config1 = new commentUtilities.EnvConfig();
+var config1 = new oCommentUtilities.EnvConfig();
 ```
 
 
@@ -191,7 +191,7 @@ The module is actually a single function. It can be called the following ways:
 1.
 
 ```
-commentUtilities.scriptLoader({
+oCommentUtilities.scriptLoader({
     url: "URL here",
     charset: "utf-8" //optional
 }, function (err) {
@@ -206,7 +206,7 @@ commentUtilities.scriptLoader({
 2.
 
 ```
-commentUtilities.scriptLoader("URL here", function (err) {
+oCommentUtilities.scriptLoader("URL here", function (err) {
     if (err) {
         throw err;
     }
@@ -229,8 +229,8 @@ Automatic type conversion means the followin: for example, if you store an objec
 The module exposes two main fields, both having the same API:
 
 ```javascript
-commentUtilities.storageWrapper.localStorage //wrapper around native localStorage
-commentUtilities.storageWrapper.sessionStorage //wrapper around native sessionStorage
+oCommentUtilities.storageWrapper.localStorage //wrapper around native localStorage
+oCommentUtilities.storageWrapper.sessionStorage //wrapper around native sessionStorage
 ```
 
 #### API of localStorage and sessionStorage
@@ -352,7 +352,7 @@ This submodule is meant to generate a callback only when all functions provided 
 The submodule itself is a single function and can be called in the following way:
 
 ```javascript
-commentUtilities.functionSync({
+oCommentUtilities.functionSync({
     func1: function (callback) {},
     func2: function (callback) {},
     func3: {
@@ -387,7 +387,7 @@ This module is able to instantiate classes extended from o-comment-ui/Widget.js 
 This feature reads the DOM for certain types of elements. An example element:
 
 ```html
-<div class="o-chat" id="commentWidget" data-o-chat-autoconstruct="true" data-o-chat-config-title="o-chat-test-closed3" data-o-chat-config-url="http://ftalphaville.ft.com/marketslive-test.html" data-o-chat-config-articleId="marketslive-test" data-o-chat-config-order="inverted"></div>
+<div class="o-chat" id="commentWidget" data-o-chat-config-title="o-chat-test-closed3" data-o-chat-config-url="http://ftalphaville.ft.com/marketslive-test.html" data-o-chat-config-articleId="marketslive-test" data-o-chat-config-order="inverted"></div>
 ```
 
 Key parts of the DOM element:
@@ -449,3 +449,37 @@ document.body.addEventListener('oChat.domConstruct', function (evt) {
     //evt.detail.id and evt.detail.instance contains the above
 });
 ```
+
+### cookie
+Helpers for working with cookies.
+
+#### get
+Reads a cookie by name.
+
+```javascript
+oCommentUtilities.cookie.get('name');
+```
+
+#### set
+Sets a cookie.
+
+```javascript
+oCommentUtilities.cookie.set('name', 'value', 36 /*days */);
+```
+
+#### remove
+Removes a cookie
+
+```javascript
+oCommentUtilities.cookie.remove('name');
+```
+
+
+### ftUser
+ftUser is a helper for obtaining information about the FT user, information like logged in status, user ID, email address, session ID.
+
+Methods exposed that can be used:
+ - isLoggedIn: returns the user's login status: true or false.
+ - getEmail: returns the user's email address
+ - getUserId: returns the user's ID
+ - getSession: returns the FT session ID

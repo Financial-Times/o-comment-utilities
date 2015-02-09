@@ -17,3 +17,5 @@ exports.dom = {
 	ScrollMonitor: require('./src/javascripts/dom/ScrollMonitor.js'),
 	offset: require('./src/javascripts/dom/offset.js')
 };
+exports.cookie = require('./src/javascripts/cookie/cookie.js');
+exports.ftUser = require('./src/javascripts/user/ftUser.js');
