@@ -3,19 +3,19 @@
 exports.set = function (name, value, days) {
 	var expires;
 
-    if (days) {
-        var date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        expires = "; expires="+date.toGMTString();
-    }
-    else {
-    	expires = "";
-    }
-    document.cookie = name + "=" + value + expires + "; path=/";
+	if (days) {
+		var date = new Date();
+		date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+		expires = "; expires="+date.toGMTString();
+	}
+	else {
+		expires = "";
+	}
+	document.cookie = name + "=" + value + expires + "; path=/";
 };
 
 exports.get = function(name) {
-    var nameEQ = name + "=";
+	var nameEQ = name + "=";
 	var ca = document.cookie.split(';');
 	for (var i = 0; i < ca.length; i++) {
 		var c = ca[i];
@@ -30,5 +30,5 @@ exports.get = function(name) {
 };
 
 exports.remove = function (name) {
-    exports.set(name, "", -1);
+	exports.set(name, "", -1);
 };

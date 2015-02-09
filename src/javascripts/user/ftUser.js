@@ -1,6 +1,6 @@
 "use strict";
 
-var cookie = require('./cookie/cookie.js');
+var cookie = require('../cookie/cookie.js');
 
 /**
  * There are some FT cookies which incorporates multiple key value pairs.
