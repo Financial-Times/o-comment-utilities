@@ -1,9 +1,7 @@
 "use strict";
 
-var sizzle = require('sizzle');
-
 module.exports = function (config) {
-	var instances = sizzle('.' + config.baseClass);
+	var instances = document.querySelectorAll('.' + config.baseClass);
 
 	var item;
 	for (var i = 0; i < instances.length; i++) {
