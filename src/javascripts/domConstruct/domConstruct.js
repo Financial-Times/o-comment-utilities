@@ -6,17 +6,24 @@ module.exports = function (config) {
 	var instances = document.querySelectorAll('.' + config.baseClass);
 
 	var item;
+	var meetsReqs;
 	for (var i = 0; i < instances.length; i++) {
 		item = instances[i];
 
-		if (item.getAttribute('data-' + config.baseClass + '-autoconstruct') === "true") {
+
+		meetsReqs = item.getAttribute('data-' + config.baseClass + '-built') !== "true";
+		if (config.auto) {
+			meetsReqs = meetsReqs && item.getAttribute('data-' + config.baseClass + '-autoconstruct') === "true";
+		}
+
+		if (meetsReqs) {
 			if (!item.id) {
 				// generate an ID
 				item.id = config.baseClass + '--' + generateId();
 			}
 
 			// prevent rebuilding it again
-			item.setAttribute('data-' + config.baseClass + '-autoconstruct', "false");
+			item.setAttribute('data-' + config.baseClass + '-built', "true");
 
 			var widgetConfig = {
 				elId: item.id

@@ -393,10 +393,8 @@ This feature reads the DOM for certain types of elements. An example element:
 Key parts of the DOM element:
 
  - class: defines the type of Widget element, in this example `o-chat`.
- - id: this is needed to uniquely identify the DOM element.
- - data-o-chat-autoconstruct="true": enables auto-construction of a Widget element, based on the information stored on the DOM element
+ - id: optional, if it's not present it will be generated
  - data attributes: configuration options that are passed to the Widget constructor
-
 
 In order to start the DOM construction, the `oCommentUtilities.initDomConstruct` function should be called with a configuration object, which has the following fields:
 
@@ -404,18 +402,33 @@ In order to start the DOM construction, the `oCommentUtilities.initDomConstruct`
  - namespace: according to the origami spec, all events generated should be namespaced with the module's name, without dashes, but with camel case. In the example above namespace would be a string `'oChat'`.
  - Widget: reference to a Widget element which will be instantiated (e.g. new Widget). In the example above this would be the object `oChat.Widget`.
  - module: reference to the global scope of the module. In the example above this would be the object `oChat`.
+ - auto: if set to true, only the widgets with `data-{namespace}-autoconstruct="true"` (e.g. data-o-chat-autoconstruct="true") will be considered. This is useful when there are two phases of construction: one on DOMContentLoaded and one on demand. On DOMContentLoaded there will be loaded only the widgets with this attribute, while the others only on explicit call.
 
 
 Example: 
 
 ```javascript
-oCommentUtilities.initDomConstruct({
-    baseClass: 'o-chat',
-    namespace: 'oChat',
-    module: oChat,
-    namespace: oChat.Widget
+var initDomConstructOnDemand = function () {
+    oCommentUtilities.initDomConstruct({
+        baseClass: 'o-chat',
+        namespace: 'oChat',
+        module: oChat,
+        namespace: oChat.Widget
+    });
+}
+
+document.addEventListener('o.DOMContentLoaded', function () {
+    oCommentUtilities.initDomConstruct({
+        baseClass: 'o-chat',
+        namespace: 'oChat',
+        module: oChat,
+        namespace: oChat.Widget,
+        auto: true
+    });
 });
 ```
+
+
 
 In some cases this module should be called on demand by the product, so it could be exposed as a public API as part of the module which uses it.
 
@@ -449,6 +462,12 @@ document.body.addEventListener('oChat.domConstruct', function (evt) {
     //evt.detail.id and evt.detail.instance contains the above
 });
 ```
+
+
+
+The widget that is already created will have a flag that says that it shouldn't be created again, even if initDomConstruct is called again. The flag that is set is `data-{namespace}-built="true"` (e.g. data-o-chat-built="true"). **If you are creating instances in another way (programatically), once you create a container it should have this flag set.**
+
+
 
 ### cookie
 Helpers for working with cookies.
