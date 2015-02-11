@@ -19,3 +19,4 @@ exports.dom = {
 };
 exports.cookie = require('./src/javascripts/cookie/cookie.js');
 exports.ftUser = require('./src/javascripts/user/ftUser.js');
+exports.generateId = require('./src/javascripts/generateId/generateId.js');

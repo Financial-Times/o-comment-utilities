@@ -1,5 +1,7 @@
 "use strict";
 
+var generateId = require('../generateId/generateId.js');
+
 module.exports = function (config) {
 	var instances = document.querySelectorAll('.' + config.baseClass);
 
@@ -7,7 +9,15 @@ module.exports = function (config) {
 	for (var i = 0; i < instances.length; i++) {
 		item = instances[i];
 
-		if (item.getAttribute('data-' + config.baseClass + '-autoconstruct') === "true" && item.id && item.innerHTML === "") {
+		if (item.getAttribute('data-' + config.baseClass + '-autoconstruct') === "true") {
+			if (!item.id) {
+				// generate an ID
+				item.id = config.baseClass + '--' + generateId();
+			}
+
+			// prevent rebuilding it again
+			item.setAttribute('data-' + config.baseClass + '-autoconstruct', "false");
+
 			var widgetConfig = {
 				elId: item.id
 			};
