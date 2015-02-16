@@ -152,9 +152,7 @@ if (storageOk) {
 		 * Returns the native storage object.
 		 * @return {sessionStorage|localStorage}
 		 */
-		this.native = function () {
-			return storageObj;
-		};
+		this.native = storageObj;
 
 
 		this.destroy = function () {
@@ -183,10 +181,7 @@ if (storageOk) {
 		this.clear = function () {
 			return false;
 		};
-		this.native = function () {
-			return undefined;
-		};
-
+		this.native = undefined;
 
 		this.destroy = function () {
 
