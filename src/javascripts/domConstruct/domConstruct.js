@@ -3,17 +3,26 @@
 var generateId = require('../generateId/generateId.js');
 
 module.exports = function (config) {
-	var instances = document.querySelectorAll('.' + config.baseClass);
+	var el = config.context;
+
+	if (!el) {
+		el = document.body;
+	} else if (!(el instanceof HTMLElement)) {
+		el = document.querySelector(el);
+	}
+
+	var instances = el.querySelectorAll('[data-o-component="'+ config.baseClass +'"]');
 
 	var item;
 	var meetsReqs;
+	var widgets = [];
+
 	for (var i = 0; i < instances.length; i++) {
 		item = instances[i];
 
-
-		meetsReqs = item.getAttribute('data-' + config.baseClass + '-built') !== "true";
+		meetsReqs = !!item.getAttribute('data-' + config.baseClass + '-built');
 		if (config.auto) {
-			meetsReqs = meetsReqs && item.getAttribute('data-' + config.baseClass + '-autoconstruct') === "true";
+			meetsReqs = meetsReqs && item.getAttribute('data-' + config.baseClass + '-auto-init') !== "false";
 		}
 
 		if (meetsReqs) {
@@ -25,9 +34,7 @@ module.exports = function (config) {
 			// prevent rebuilding it again
 			item.setAttribute('data-' + config.baseClass + '-built', "true");
 
-			var widgetConfig = {
-				elId: item.id
-			};
+			var widgetConfig = {};
 			var match;
 
 			for (var j = 0; j < item.attributes.length; j++) {
@@ -37,9 +44,9 @@ module.exports = function (config) {
 				}
 			}
 
-			var widget = new config.Widget(widgetConfig);
+			var widget = new config.Widget(item, widgetConfig);
 
-			document.body.dispatchEvent(new CustomEvent(config.namespace + '.domConstruct', {
+			document.body.dispatchEvent(new CustomEvent(config.namespace + '.ready', {
 				detail: {
 					id: item.id,
 					instance: widget
@@ -47,7 +54,11 @@ module.exports = function (config) {
 				bubble: true
 			}));
 
-			widget.load();
+			widget.init();
+
+			widgets.push(widget);
 		}
 	}
+
+	return widgets;
 };

@@ -387,42 +387,42 @@ This module is able to instantiate classes extended from o-comment-ui/Widget.js 
 This feature reads the DOM for certain types of elements. An example element:
 
 ```html
-<div class="o-chat" id="commentWidget" data-o-chat-config-title="o-chat-test-closed3" data-o-chat-config-url="http://ftalphaville.ft.com/marketslive-test.html" data-o-chat-config-articleId="marketslive-test" data-o-chat-config-order="inverted"></div>
+<div data-o-component="o-chat" id="commentWidget" data-o-chat-config-title="o-chat-test-closed3" data-o-chat-config-url="http://ftalphaville.ft.com/marketslive-test.html" data-o-chat-config-articleId="marketslive-test" data-o-chat-config-order="inverted"></div>
 ```
 
 Key parts of the DOM element:
 
- - class: defines the type of Widget element, in this example `o-chat`.
+ - `data-o-component`: defines the type of Widget element, in this example `o-chat`.
  - id: optional, if it's not present it will be generated
- - data attributes: configuration options that are passed to the Widget constructor
+ - data attributes in the format `data-o-{modulename}-config-{key}`: configuration options that are passed to the Widget constructor
 
 In order to start the DOM construction, the `oCommentUtilities.initDomConstruct` function should be called with a configuration object, which has the following fields:
 
- - baseClass: type of the Widget element, in the example above it would be a string `'o-chat'`. It is used as class and also as part of the data attributes.
- - namespace: according to the origami spec, all events generated should be namespaced with the module's name, without dashes, but with camel case. In the example above namespace would be a string `'oChat'`.
- - Widget: reference to a Widget element which will be instantiated (e.g. new Widget). In the example above this would be the object `oChat.Widget`.
- - module: reference to the global scope of the module. In the example above this would be the object `oChat`.
- - auto: if set to true, only the widgets with `data-{namespace}-autoconstruct="true"` (e.g. data-o-chat-autoconstruct="true") will be considered. This is useful when there are two phases of construction: one on DOMContentLoaded and one on demand. On DOMContentLoaded there will be loaded only the widgets with this attribute, while the others only on explicit call.
-
+ - context: an HTML element or selector. In this element will be performed the search for elements which has `data-o-component="{modulename}"`. If none is specified, it falls back to `document.body`.
+ - classNamespace: type of the Widget element, in the example above it would be a string `'o-chat'`. It is used as class and also as part of the data attributes.
+ - eventNamespace: according to the origami spec, all events generated should be namespaced with the module's name, without dashes, but with camel case. In the example above namespace would be a string `'oChat'`.
+ - classRef: reference to a *Class* which will be instantiated (e.g. new Class). In the example above this would be the object `oChat.Widget`.
+ - moduleRef: reference to the global scope of the module. In the example above this would be the object `oChat`.
+ - auto: if set to true, only the widgets which don't have `data-{namespace}-auto-init="false"` (e.g. data-o-chat-init="false") will be considered. This is useful when there are two phases of initialization: one on DOMContentLoaded and one on demand (lazy load). On DOMContentLoaded there will be loaded only the widgets which don't have this attribute, while the others only on explicit call.
 
 Example: 
 
 ```javascript
 var initDomConstructOnDemand = function () {
     oCommentUtilities.initDomConstruct({
-        baseClass: 'o-chat',
-        namespace: 'oChat',
-        module: oChat,
-        namespace: oChat.Widget
+        classNamespace: 'o-chat',
+        eventNamespace: 'oChat',
+        moduleRef: oChat,
+        classRef: oChat.Widget
     });
 }
 
 document.addEventListener('o.DOMContentLoaded', function () {
     oCommentUtilities.initDomConstruct({
-        baseClass: 'o-chat',
-        namespace: 'oChat',
-        module: oChat,
-        namespace: oChat.Widget,
+        classNamespace: 'o-chat',
+        eventNamespace: 'oChat',
+        moduleRef: oChat,
+        classRef: oChat.Widget,
         auto: true
     });
 });
@@ -438,34 +438,37 @@ Example: (from o-chat/main.js)
 ```javascript
 var Widget = require('./src/javascripts/Widget.js');
 
-exports.initDomConstruct = function () {
-    oCommentUtilities.initDomConstruct({
-        baseClass: 'o-chat',
-        namespace: 'oChat',
-        module: this,
-        namespace: Widget
+exports.init = function (el) {
+    return oCommentUtilities.initDomConstruct({
+        context: el,
+        classNamespace: 'o-chat',
+        eventNamespace: 'oChat',
+        moduleRef: this,
+        classRef: Widget
     });
 };
 ```
 
 This way all the configurations are abstracted, the product should not care about setting them.
 
-If you want to obtain a reference of the created Widget instances, you should listen on the body to the event `{namespace}.domConstruct`, which will have the following details:
+If you want to obtain a reference of the created *Class* instances, you should listen on the body to the event `{namespace}.ready` (e.g. oChat.ready), which will have the following details:
 
- - id: ID of the widget, which is basically the ID attribute of the DOM element
- - instance: the instance of the Widget
+ - id: ID of the widget, which is basically the ID attribute of the owned DOM element
+ - instance: the instance of the *Class*
 
 Example:
 
 ```javascript
-document.body.addEventListener('oChat.domConstruct', function (evt) {
-    //evt.detail.id and evt.detail.instance contains the above
+document.body.addEventListener('oChat.ready', function (evt) {
+    //evt.detail.id and evt.detail.instance are available
 });
 ```
 
 
+The instance that is already created will have a flag that says that it shouldn't be created again, even if initDomConstruct is called again. The flag that is set is `data-{namespace}-built="true"` (e.g. data-o-chat-built="true"). **If you are creating instances in another way (programatically), the container element should have this flag set.**
 
-The widget that is already created will have a flag that says that it shouldn't be created again, even if initDomConstruct is called again. The flag that is set is `data-{namespace}-built="true"` (e.g. data-o-chat-built="true"). **If you are creating instances in another way (programatically), once you create a container it should have this flag set.**
+#### Return value
+The return value is an array with all the instances of `Class` (e.g. oChat.Widget) created.
 
 
 
