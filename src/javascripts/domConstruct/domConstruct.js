@@ -7,8 +7,10 @@ function getCamelCaseName (str) {
 	var result = parts[0];
 
 	for (var i = 1; i < parts.length; i++) {
-		results += parts[i].charAt(0).toUpperCase() + parts[i].slice(1);
+		result += parts[i].charAt(0).toUpperCase() + parts[i].slice(1);
 	}
+
+	return result;
 }
 
 module.exports = function (config) {
