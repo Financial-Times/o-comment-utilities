@@ -2,6 +2,15 @@
 
 var generateId = require('../generateId/generateId.js');
 
+function getCamelCaseName (str) {
+	var parts = str.split('-');
+	var result = parts[0];
+
+	for (var i = 1; i < parts.length; i++) {
+		results += parts[i].charAt(0).toUpperCase() + parts[i].slice(1);
+	}
+}
+
 module.exports = function (config) {
 	var el = config.context;
 
@@ -38,22 +47,24 @@ module.exports = function (config) {
 			var match;
 			var itemsInConfig;
 			var currentLevel;
+			var camelCaseConfigName;
 
 			for (var j = 0; j < item.attributes.length; j++) {
 				match = item.attributes[j].name.match(new RegExp('data-' + config.baseClass + '-config-(.*)'));
 				if (match && match.length) {
-					itemsInConfig = match[1].split('-');
+					itemsInConfig = match[1].split('--');
 					currentLevel = widgetConfig;
 
 					for (var k = 0; k < itemsInConfig.length; k++) {
+						camelCaseConfigName = getCamelCaseName(itemsInConfig[k]);
 						if (k === itemsInConfig.length - 1) {
 							// last level
-							currentLevel[itemsInConfig[k]] = item.attributes[j].value;
+							currentLevel[camelCaseConfigName] = item.attributes[j].value;
 						} else {
 							// there's one more level
-							if (!currentLevel[itemsInConfig[k]]) {
-								currentLevel[itemsInConfig[k]] = {};
-								currentLevel = currentLevel[itemsInConfig[k]];
+							if (!currentLevel[camelCaseConfigName]) {
+								currentLevel[camelCaseConfigName] = {};
+								currentLevel = currentLevel[camelCaseConfigName];
 							}
 						}
 					}
