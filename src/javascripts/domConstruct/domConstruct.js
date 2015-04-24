@@ -20,7 +20,7 @@ module.exports = function (config) {
 	for (var i = 0; i < instances.length; i++) {
 		item = instances[i];
 
-		meetsReqs = !!item.getAttribute('data-' + config.baseClass + '-built');
+		meetsReqs = !item.getAttribute('data-' + config.baseClass + '-built');
 		if (config.auto) {
 			meetsReqs = meetsReqs && item.getAttribute('data-' + config.baseClass + '-auto-init') !== "false";
 		}
@@ -36,11 +36,27 @@ module.exports = function (config) {
 
 			var widgetConfig = {};
 			var match;
+			var itemsInConfig;
+			var currentLevel;
 
 			for (var j = 0; j < item.attributes.length; j++) {
 				match = item.attributes[j].name.match(new RegExp('data-' + config.baseClass + '-config-(.*)'));
 				if (match && match.length) {
-					widgetConfig[match[1]] = item.attributes[j].value;
+					itemsInConfig = match[1].split('-');
+					currentLevel = widgetConfig;
+
+					for (var k = 0; k < itemsInConfig.length; k++) {
+						if (k === itemsInConfig.length - 1) {
+							// last level
+							currentLevel[itemsInConfig[k]] = item.attributes[j].value;
+						} else {
+							// there's one more level
+							if (!currentLevel[itemsInConfig[k]]) {
+								currentLevel[itemsInConfig[k]] = {};
+								currentLevel = currentLevel[itemsInConfig[k]];
+							}
+						}
+					}
 				}
 			}
 
