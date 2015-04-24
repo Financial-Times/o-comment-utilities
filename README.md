@@ -505,3 +505,37 @@ Methods exposed that can be used:
  - getEmail: returns the user's email address
  - getUserId: returns the user's ID
  - getSession: returns the FT session ID
+
+
+### flatObjectToCamelCase
+Flattens an object by combining the labels into camelCase key names.
+
+Example:
+
+`Source`:
+
+```javascript
+{
+    name: {
+        of: {
+            the: {
+                obj: "value1"
+            },
+            that: "value2"
+        },
+        isMine: "value3"
+    },
+    single: "value4"
+}
+```
+
+`Results`:
+
+```javascript
+{
+    nameOfTheObj: "value1",
+    nameOfThat: "value2",
+    nameIsMine: "value3",
+    single: "value4"
+}
+```
