@@ -83,8 +83,6 @@ module.exports = function (config) {
 				bubble: true
 			}));
 
-			widget.init();
-
 			widgets.push(widget);
 		}
 	}
