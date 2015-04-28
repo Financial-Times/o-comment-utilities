@@ -5,6 +5,17 @@ A collection of helper functions used by o-comments and o-chat.
 
  * <a href="#howtouseit">How to use it</a>
  * <a href="#api">API</a>
+     * <a href="#envConfig">envConfig</a>
+     * <a href="#events">Events</a>
+     * <a href="#envConfig">envConfig</a>
+     * <a href="#jsonp">jsonp</a>
+     * <a href="#scriptLoader">scriptLoader</a>
+     * <a href="#storageWrapper">storageWrapper</a>
+     * <a href="#logger">logger</a>
+     * <a href="#functionSync">functionSync</a>
+     * <a href="#domConstruct">domConstruct</a>
+     * <a href="#cookie">cookie</a>
+     * <a href="#ftUser">ftUser</a>
 
 ## <div id="howtouseit"></div> How to use it
 
@@ -15,9 +26,9 @@ var oCommentUtilities = require('o-comment-utilities');
 ```
 
 
-## API
+## <div id="api"></div> API
 
-### envConfig
+### <div id="envConfig"></div> envConfig
 This module provides a useful way to handle application level configurations. It supports setting and reading configurations, also overriding existing values (helpful when the application should be working on different environments with partially different configuration).
 
 #### Constructor
@@ -87,7 +98,7 @@ This is equivalent with the following object:
 ```
 
 
-### Events
+### <div id="events"></div> Events
 This module helps creating custom events, listening on custom events and triggering them. It is similar to jQuery's event system (except that it doesn't support namespacing).
 
 #### Constructor
@@ -145,7 +156,7 @@ Where:
  - customData: optional parameter, data to be passed to the event handlers.
 
 
-### jsonp
+### <div id="jsonp"></div> jsonp
 This module provides a similar solution for JSONP communication as jQuery. For more information on JSONP, visit http://json-p.org/ .
 
 The module is actually a single function. It should be called the following way:
@@ -172,7 +183,7 @@ If data should be sent, it can be part of the URL directly, or can be provided a
 The callback has a Node.js inspired form. The first parameter is the error parameter, while the second one is the data parameter received from the server as a response.
 
 
-### scriptLoader
+### <div id="scriptLoader"></div> scriptLoader
 This module provides a similar solution for loading a Javascript file asynchronously as jQuery's $.getScript() (http://api.jquery.com/jquery.getscript/).
 
 The module is actually a single function. It can be called the following ways:
@@ -210,7 +221,7 @@ Both parameters (configuration object/URL and callback) are required. Also, if t
 The callback has a Node.js inspired form. The parameter is either 'null' or an Error instance. If it doesn't contain an error, the loading finished with success.
 
 
-### storageWrapper
+### <div id="storageWrapper"></div> storageWrapper
 Wrapper around localStorage and sessionStorage, but enhanced with automatic type conversion.
 
 Automatic type conversion means the followin: for example, if you store an object which can be serialized into a JSON string, when you read it back you will get the same Javascript object and not just a plain string.
@@ -281,7 +292,7 @@ Returns the native localStorage or sessionStorage object.
 
 
 
-### logger
+### <div id="logger"></div> logger
 Logging helper which uses the native "console" to log. It also extends IE8 logging capabilities by stringifying complex objects.
 
 Where console is not available, the logger fails silently.
@@ -335,13 +346,14 @@ Available functions:
  - error
 
 
-### functionSync
+### <div id="functionSync"></div> functionSync
+#### Parallel
 This submodule is meant to generate a callback only when all functions provided finished their execution. This is achieved by passing a callback as parameter to the functions that are executed.
 
 The submodule itself is a single function and can be called in the following way:
 
 ```javascript
-oCommentUtilities.functionSync({
+oCommentUtilities.functionSync.parallel({
     func1: function (callback) {},
     func2: function (callback) {},
     func3: {
@@ -369,7 +381,7 @@ Functions provided within the object can be in the following forms:
 
 For more information on the technical side, please visit the detailed documentation (docs/index.html).
 
-### domConstruct
+### <div id="domConstruct"></div> domConstruct
 This module is able to instantiate classes extended from o-comment-ui/Widget.js using markup in the DOM.
 
 #### How to use it
@@ -461,7 +473,7 @@ The return value is an array with all the instances of `Class` (e.g. oChat.Widge
 
 
 
-### cookie
+### <div id="cookie"></div> cookie
 Helpers for working with cookies.
 
 #### get
@@ -486,7 +498,7 @@ oCommentUtilities.cookie.remove('name');
 ```
 
 
-### ftUser
+### <div id="ftUser"></div> ftUser
 ftUser is a helper for obtaining information about the FT user, information like logged in status, user ID, email address, session ID.
 
 Methods exposed that can be used:
