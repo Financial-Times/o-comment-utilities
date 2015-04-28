@@ -1,32 +1,21 @@
-# o-comment-utilities
+# Introduction
 A collection of helper functions used by o-comments and o-chat.
 
----
+## Contents
 
-## How to use it
-There are two ways of using this module:
+ * <a href="#howtouseit">How to use it</a>
+ * <a href="#api">API</a>
 
-### Standalone
-Run `grunt`, then insert the JS found in the dist folder:
+## <div id="howtouseit"></div> How to use it
 
-```javascript
-<script src="dist/javascripts/oCommentUtilities.min.js"></script>
-```
-
-The module's API can be accessed using `oCommentUtilities` in the global scope.
-
-### Bower and browserify
-With bower, simply require the module:
+Javascript:
 
 ```javascript
 var oCommentUtilities = require('o-comment-utilities');
 ```
 
-The module should be built using `browserify` (with `debowerify` transform).
 
----
-
-## Submodules
+## API
 
 ### envConfig
 This module provides a useful way to handle application level configurations. It supports setting and reading configurations, also overriding existing values (helpful when the application should be working on different environments with partially different configuration).
@@ -394,7 +383,7 @@ Key parts of the DOM element:
 
  - `data-o-component`: defines the type of Widget element, in this example `o-chat`.
  - id: optional, if it's not present it will be generated
- - data attributes in the format `data-o-{modulename}-config-{key}`: configuration options that are passed to the Widget constructor
+ - data attributes in the format `data-o-{modulename}-config-{key}`: configuration options that are passed to the Widget constructor. `{key}` has the following rule: `--` means new object level, `-` means camel case. Example: `data-o-comments-config-livefyre--data-format--absolute="value"` is transformed to: ```{"livefyre": {"dataFormat": {"absolute": "value"}}}```.
 
 In order to start the DOM construction, the `oCommentUtilities.initDomConstruct` function should be called with a configuration object, which has the following fields:
 
@@ -403,7 +392,7 @@ In order to start the DOM construction, the `oCommentUtilities.initDomConstruct`
  - eventNamespace: according to the origami spec, all events generated should be namespaced with the module's name, without dashes, but with camel case. In the example above namespace would be a string `'oChat'`.
  - classRef: reference to a *Class* which will be instantiated (e.g. new Class). In the example above this would be the object `oChat.Widget`.
  - moduleRef: reference to the global scope of the module. In the example above this would be the object `oChat`.
- - auto: if set to true, only the widgets which don't have `data-{namespace}-auto-init="false"` (e.g. data-o-chat-init="false") will be considered. This is useful when there are two phases of initialization: one on DOMContentLoaded and one on demand (lazy load). On DOMContentLoaded there will be loaded only the widgets which don't have this attribute, while the others only on explicit call.
+ - auto: if set to true, only the widgets which don't have `data-{namespace}-auto-init="false"` (e.g. data-o-chat-init="false") will be considered. This is useful when there are two phases of initialization: one on `o.DOMContentLoaded` and one on demand (lazy load). On `o.DOMContentLoaded` there will be loaded only the widgets which don't have this attribute, while the others only on explicit call.
 
 Example: 
 
@@ -506,36 +495,3 @@ Methods exposed that can be used:
  - getUserId: returns the user's ID
  - getSession: returns the FT session ID
 
-
-### flatObjectToCamelCase
-Flattens an object by combining the labels into camelCase key names.
-
-Example:
-
-`Source`:
-
-```javascript
-{
-    name: {
-        of: {
-            the: {
-                obj: "value1"
-            },
-            that: "value2"
-        },
-        isMine: "value3"
-    },
-    single: "value4"
-}
-```
-
-`Results`:
-
-```javascript
-{
-    nameOfTheObj: "value1",
-    nameOfThat: "value2",
-    nameIsMine: "value3",
-    single: "value4"
-}
-```
