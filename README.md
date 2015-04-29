@@ -3,7 +3,6 @@ A collection of helper functions used by o-comments and o-chat.
 
 ## Contents
 
- * <a href="#howtouseit">How to use it</a>
  * <a href="#api">API</a>
      * <a href="#envConfig">envConfig</a>
      * <a href="#events">Events</a>
@@ -16,14 +15,6 @@ A collection of helper functions used by o-comments and o-chat.
      * <a href="#domConstruct">domConstruct</a>
      * <a href="#cookie">cookie</a>
      * <a href="#ftUser">ftUser</a>
-
-## <div id="howtouseit"></div> How to use it
-
-Javascript:
-
-```javascript
-var oCommentUtilities = require('o-comment-utilities');
-```
 
 
 ## <div id="api"></div> API
