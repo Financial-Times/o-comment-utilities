@@ -393,8 +393,7 @@ In order to start the DOM construction, the `oCommentUtilities.initDomConstruct`
  - context: an HTML element or selector. In this element will be performed the search for elements which has `data-o-component="{modulename}"`. If none is specified, it falls back to `document.body`.
  - classNamespace: type of the Widget element, in the example above it would be a string `'o-chat'`. It is used as class and also as part of the data attributes.
  - eventNamespace: according to the origami spec, all events generated should be namespaced with the module's name, without dashes, but with camel case. In the example above namespace would be a string `'oChat'`.
- - classRef: reference to a *Class* which will be instantiated (e.g. new Class). In the example above this would be the object `oChat.Widget`.
- - moduleRef: reference to the global scope of the module. In the example above this would be the object `oChat`.
+ - module: reference to the global scope of the module. In the example above this would be the object `oChat`.
  - auto: if set to true, only the widgets which don't have `data-{namespace}-auto-init="false"` (e.g. data-o-chat-init="false") will be considered. This is useful when there are two phases of initialization: one on `o.DOMContentLoaded` and one on demand (lazy load). On `o.DOMContentLoaded` there will be loaded only the widgets which don't have this attribute, while the others only on explicit call.
 
 Example: 
