@@ -1,12 +1,10 @@
-"use strict";
-
-var generateId = require('../generateId/generateId.js');
+const generateId = require('../generateId/generateId.js');
 
 function getCamelCaseName (str) {
-	var parts = str.split('-');
-	var result = parts[0];
+	const parts = str.split('-');
+	let result = parts[0];
 
-	for (var i = 1; i < parts.length; i++) {
+	for (let i = 1; i < parts.length; i++) {
 		result += parts[i].charAt(0).toUpperCase() + parts[i].slice(1);
 	}
 
@@ -14,7 +12,7 @@ function getCamelCaseName (str) {
 }
 
 module.exports = function (config) {
-	var el = config.context;
+	let el = config.context;
 
 	if (!el) {
 		el = document.body;
@@ -22,13 +20,13 @@ module.exports = function (config) {
 		el = document.querySelector(el);
 	}
 
-	var instances = el.querySelectorAll('[data-o-component="'+ config.classNamespace +'"]');
+	const instances = el.querySelectorAll('[data-o-component="'+ config.classNamespace +'"]');
 
-	var item;
-	var meetsReqs;
-	var widgets = [];
+	let item;
+	let meetsReqs;
+	const widgets = [];
 
-	for (var i = 0; i < instances.length; i++) {
+	for (let i = 0; i < instances.length; i++) {
 		item = instances[i];
 
 		meetsReqs = !item.getAttribute('data-' + config.classNamespace + '-built');
@@ -45,19 +43,19 @@ module.exports = function (config) {
 			// prevent rebuilding it again
 			item.setAttribute('data-' + config.classNamespace + '-built', "true");
 
-			var widgetConfig = {};
-			var match;
-			var itemsInConfig;
-			var currentLevel;
-			var camelCaseConfigName;
+			const widgetConfig = {};
+			let match;
+			let itemsInConfig;
+			let currentLevel;
+			let camelCaseConfigName;
 
-			for (var j = 0; j < item.attributes.length; j++) {
+			for (let j = 0; j < item.attributes.length; j++) {
 				match = item.attributes[j].name.match(new RegExp('data-' + config.classNamespace + '-config-(.*)'));
 				if (match && match.length) {
 					itemsInConfig = match[1].split('--');
 					currentLevel = widgetConfig;
 
-					for (var k = 0; k < itemsInConfig.length; k++) {
+					for (let k = 0; k < itemsInConfig.length; k++) {
 						camelCaseConfigName = getCamelCaseName(itemsInConfig[k]);
 						if (k === itemsInConfig.length - 1) {
 							// last level
@@ -73,7 +71,9 @@ module.exports = function (config) {
 				}
 			}
 
-			var widget = new config.module(item, widgetConfig);
+			/* eslint-disable */ // Constructor name should start with uppercase, but in this case the constructor is a variable
+			const widget = new config.module(item, widgetConfig);
+			/* eslint-enable */
 
 			document.body.dispatchEvent(new CustomEvent(config.eventNamespace + '.ready', {
 				detail: {

@@ -1,22 +1,20 @@
-"use strict";
-
 function ScrollMonitor (el, callback) {
-	var elToListen = el;
-	var elToReadPosition = el;
+	let elToListen = el;
+	let elToReadPosition = el;
 	if (el === document.body || el === document.getElementsByTagName('html')[0] || el === window) {
 		elToReadPosition = [document.body, document.getElementsByTagName('html')[0]];
 		elToListen = window;
 	}
 
-	var started = false;
+	let started = false;
 
 
-	var lastTime = 0;
-	var throttle = 200;
-	var scrollPosition;
-	var lastScrollPosition;
-	var lastScrollPositionCheck;
-	var i;
+	let lastTime = 0;
+	let throttle = 200;
+	let scrollPosition;
+	let lastScrollPosition;
+	let lastScrollPositionCheck;
+	let i;
 
 	function onValidScroll (force) {
 		if (elToReadPosition instanceof Array) {

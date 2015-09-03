@@ -1,10 +1,8 @@
-"use strict";
-
 module.exports = function (el) {
-	var left = 0;
-	var top = 0;
+	let left = 0;
+	let top = 0;
 
-	var obj = el;
+	let obj = el;
 	if (obj.offsetParent) {
 		do {
 			left += obj.offsetLeft;

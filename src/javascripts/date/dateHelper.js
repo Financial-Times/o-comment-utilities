@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * Pad number to 2 characters.
  * @param  {Number} number Number which should be pad to 2 characters.
@@ -12,7 +10,7 @@ function padTo2 (number) {
 	return number;
 }
 
-var date = {
+const date = {
 	/**
 	 * Converts a date in any format to a timestamp in milliseconds.
 	 * @param  {Date|String|Number} timestampOrDate Can be Date, string which is compatible with the constructor of Date, or a timestamp.
@@ -53,7 +51,7 @@ var date = {
 	 * @return {String} Date in ISO format.
 	 */
 	toISOString: function (timestampOrDate) {
-			var dateObj = date.toDateObject(timestampOrDate);
+			const dateObj = date.toDateObject(timestampOrDate);
 
 		if (dateObj.hasOwnProperty('toISOString')) {
 			return dateObj.toISOString();

@@ -1,11 +1,9 @@
-"use strict";
+const generateId = function () {
+	let text = "";
+	const possible = "abcdefghijklmnopqrstuvwxyz";
+	const length = (Math.random() + 1) * 10;
 
-var generateId = function () {
-	var text = "";
-	var possible = "abcdefghijklmnopqrstuvwxyz";
-	var length = (Math.random() + 1) * 10;
-
-	for( var i=0; i < length; i++ )
+	for( let i=0; i < length; i++ )
 		text += possible.charAt(Math.floor(Math.random() * possible.length));
 
 	return text;

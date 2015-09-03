@@ -1,6 +1,4 @@
-"use strict";
-
-var cookie = require('../cookie/cookie.js');
+const cookie = require('../cookie/cookie.js');
 
 /**
  * There are some FT cookies which incorporates multiple key value pairs.
@@ -12,11 +10,13 @@ var cookie = require('../cookie/cookie.js');
  *
  * @param  {String} cookieName Name of the cookie
  * @param  {String} param      Parameter to search within the cookie's value.
- * @return {String}
+ * @return {String} Value of the cookie parameter.
  */
 function getCookieParam (cookieName, param) {
+	let match;
+
 	if (cookie.get(cookieName)) {
-		var match = cookie.get(cookieName).match(new RegExp('(^|[:])'+ param +'=([^:]*)'));
+		match = cookie.get(cookieName).match(new RegExp('(^|[:])'+ param +'=([^:]*)'));
 		if (match && match.length && match[2]) {
 			return match[2];
 		}
@@ -27,7 +27,7 @@ function getCookieParam (cookieName, param) {
 
 /**
  * Check if the cookies which shows that a user is possibly logged in are set.
- * @return {Boolean}
+ * @return {Boolean} If the user is logged in or not
  */
 function isLoggedIn () {
 	return !!getCookieParam('FT_User', 'EMAIL') || !!getCookieParam('FT_Remember', 'EMAIL');
@@ -35,7 +35,7 @@ function isLoggedIn () {
 
 /**
  * Reads the user's email address from the cookies set.
- * @return {String}
+ * @return {String} Email address
  */
 function getEmail () {
 	return getCookieParam('FT_User', 'EMAIL') || getCookieParam('FT_Remember', 'EMAIL') || null;
@@ -43,7 +43,7 @@ function getEmail () {
 
 /**
  * Reads the user's eRights ID from the cookies set.
- * @return {String}
+ * @return {String} User ID
  */
 function getUserId () {
 	return getCookieParam('FT_User', 'ERIGHTSID') || null;
@@ -51,7 +51,7 @@ function getUserId () {
 
 /**
  * Reads the user's session identifier.
- * @return {String}
+ * @return {String} Session ID
  */
 function getSession () {
 	return isLoggedIn() ? cookie.get('FTSession') : null;

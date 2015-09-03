@@ -1,10 +1,8 @@
-"use strict";
-
 /**
  * Is storage supported?
  * @type {Boolean}
  */
-var storageOk = false;
+let storageOk = false;
 if (typeof Storage !== "undefined") {
 	try {
 		localStorage.setItem('test', 2);
@@ -14,7 +12,7 @@ if (typeof Storage !== "undefined") {
 	} catch (e) {}
 }
 
-var StorageWrapper = null;
+let StorageWrapper = null;
 
 if (storageOk) {
 	/**
@@ -25,9 +23,10 @@ if (storageOk) {
 	 * @param {string} type Type of the storage to be used. Possible values:
 	 * - local or localStorage
 	 * - session or sessionStorage
+	 * @return {undefined}
 	 */
 	StorageWrapper = function (type) {
-		var storageObj;
+		let storageObj;
 
 		if (type === 'local' || type === 'localStorage') {
 			storageObj = localStorage;
@@ -41,9 +40,12 @@ if (storageOk) {
 		 * Sets an item.
 		 * @param {string} key The key of the entry.
 		 * @param {string|boolean|date|number|array|object} value Value which will be stored. The value is serialized when storing the object.
+		 * @return {undefined}
 		 */
 		this.setItem = function (key, value) {
-			var realValue, type;
+			let realValue;
+			let type;
+
 			switch (typeof value) {
 				case "string":
 				case "boolean":
@@ -89,9 +91,11 @@ if (storageOk) {
 		 * @return {string|boolean|date|number|array|object} Unserialized value
 		 */
 		this.getItem = function (key) {
-			var value = storageObj.getItem(key);
+			let type;
+			let value = storageObj.getItem(key);
+
 			if (value) {
-				var type = value.substr(0, value.indexOf("|"));
+				type = value.substr(0, value.indexOf("|"));
 
 				value = value.substr(value.indexOf("|") + 1);
 
@@ -127,7 +131,7 @@ if (storageOk) {
 		/**
 		 * Checks if there's an entry for the key.
 		 * @param  {string}  key The key of the entry.
-		 * @return {Boolean}
+		 * @return {Boolean} If it has the item or not.
 		 */
 		this.hasItem = function (key) {
 			return !!storageObj.getItem(key);
@@ -136,6 +140,7 @@ if (storageOk) {
 		/**
 		 * Removes the entry that is stored with the key.
 		 * @param  {string}  key The key of the entry.
+		 * @return {undefined}
 		 */
 		this.removeItem = function (key) {
 			storageObj.removeItem(key);
@@ -143,6 +148,7 @@ if (storageOk) {
 
 		/**
 		 * Clears all entries.
+		 * @return {undefined}
 		 */
 		this.clear = function () {
 			storageObj.clear();

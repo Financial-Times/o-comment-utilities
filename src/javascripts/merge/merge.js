@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * Merges two or more objects into a single object. It either overrides if the key is the same, or appends to the existing object.
  * The first parameter is the destination, all the other parameters are the sources.
@@ -10,12 +8,13 @@
  * @return {object} The modified destination object with the sources merged in.
  */
 function merge (destination) {
-	var i,
-		ln = arguments.length,
-		mergeFn = merge,
-		object, key, value;
+	const ln = arguments.length;
+	const mergeFn = merge;
+	let object;
+	let key;
+	let value;
 
-	for (i = 1; i < ln; i++) {
+	for (let i = 1; i < ln; i++) {
 		object = arguments[i];
 
 		for (key in object) {

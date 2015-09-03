@@ -1,20 +1,19 @@
-"use strict";
-
 /**
  * When instantiated, it creates an isolated event collection.
  * These events can be handled and triggered using the resulted object.
+ * @return {undefined}
  */
 function Events () {
-	var self = this;
+	const self = this;
 
 	/**
 	 * Isolated set of events.
 	 * @type {Object}
 	 */
-	var events = {};
+	let events = {};
 
-	var actionInProgress = {};
-	var actionQueue = {};
+	let actionInProgress = {};
+	let actionQueue = {};
 
 
 	function queueAnAction (evt, type, args) {
@@ -32,7 +31,7 @@ function Events () {
 
 	function nextAction (evt) {
 		if (!actionInProgress[evt]) {
-			var action = actionQueue[evt].shift();
+			const action = actionQueue[evt].shift();
 
 			if (action) {
 				actionInProgress[evt] = true;
@@ -56,6 +55,7 @@ function Events () {
 	 * Registers a new event handler to a specified event which will be called each time the event is triggered.
 	 * @param  {string}   evt    Name of the event.
 	 * @param  {Function} handler Handler function which will be called when the event is triggered.
+	 * @return {undefined}
 	 */
 	this.on = function (evt, handler) {
 		if (typeof evt !== 'string' || typeof handler !== 'function') {
@@ -72,8 +72,9 @@ function Events () {
 
 	/**
 	 * Registers a new event handler to a specified event which will be called only the first time the event is triggered.
-	 * @param  {string}   event    Name of the event.
+	 * @param  {String}   evt    Name of the event.
 	 * @param  {Function} handler Handler function which will be called when the event is triggered.
+	 * @return {undefined}
 	 */
 	this.one = function (evt, handler) {
 		if (typeof evt !== 'string' || typeof handler !== 'function') {
@@ -97,7 +98,7 @@ function Events () {
 	 * @return {number}            Index where the handler was found or -1 if not found.
 	 */
 	function getIndexOfHandler (arr, handler) {
-		for (var i=0; i<arr.length; i++) {
+		for (let i=0; i<arr.length; i++) {
 			if (arr[i].callback === handler) {
 				return i;
 			}
@@ -113,18 +114,19 @@ function Events () {
 	 * If an event handler is specified as well, only that specific event handler will be removed.
 	 * @param  {string}   evt   Optional. Name of the event from which the event handler should be removed.
 	 * @param  {Function} handler Optional. Handler function to be removed.
+	 * @return {undefined}
 	 */
-	var off = function (evt, handler) {
-		var handlerNotSet = (typeof handler === 'undefined');
-		var eventCorrect = (typeof evt === 'string');
-		var handlerCorrect = (typeof handler === 'function');
+	const off = function (evt, handler) {
+		const handlerNotSet = (typeof handler === 'undefined');
+		const eventCorrect = (typeof evt === 'string');
+		const handlerCorrect = (typeof handler === 'function');
 
 		if (eventCorrect) {
 			if (events[evt]) {
 				if (handlerNotSet) {
 					delete events[evt];
 				} else if (handlerCorrect) {
-					var index = getIndexOfHandler(events[evt], handler);
+					const index = getIndexOfHandler(events[evt], handler);
 
 					if (index > -1) {
 						events[evt].splice(index, 1);
@@ -138,15 +140,16 @@ function Events () {
 	 * Queues off process(es) for the event(s).
 	 * @param  {string}   evt   Optional. Name of the event from which the event handler should be removed.
 	 * @param  {Function} handler Optional. Handler function to be removed.
+	 * @return {undefined}
 	 */
 	this.off = function (evt, handler) {
-		var eventNotSet = (typeof evt === 'undefined');
-		var handlerNotSet = (typeof handler === 'undefined');
-		var eventCorrect = (typeof evt === 'string');
-		var handlerCorrect = (typeof handler === 'function');
+		const eventNotSet = (typeof evt === 'undefined');
+		const handlerNotSet = (typeof handler === 'undefined');
+		const eventCorrect = (typeof evt === 'string');
+		const handlerCorrect = (typeof handler === 'function');
 
 		if (eventNotSet) {
-			for (var evtKey in events) {
+			for (const evtKey in events) {
 				if (events.hasOwnProperty(evtKey)) {
 					queueAnAction(evtKey, 'off', [evtKey]);
 				}
@@ -168,9 +171,10 @@ function Events () {
 	 * Triggers an event which causes the call of each handler attached.
 	 * @param  {string} evt      Name of the event which will be triggered.
 	 * @param  {any}    customData Optional. Data to be passed to handlers.
+	 * @return {undefined}
 	 */
-	var trigger = function (evt, customData) {
-		var i;
+	const trigger = function (evt, customData) {
+		let i;
 
 		if (events[evt]) {
 			if (!(customData instanceof Array)) {
@@ -194,6 +198,7 @@ function Events () {
 	 * Queues a trigger process for the event.
 	 * @param  {string} evt      Name of the event which will be triggered.
 	 * @param  {any}    customData Optional. Data to be passed to handlers.
+	 * @return {undefined}
 	 */
 	this.trigger = function (evt) {
 		queueAnAction(evt, 'trigger', arguments);

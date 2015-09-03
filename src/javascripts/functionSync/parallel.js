@@ -1,19 +1,18 @@
-"use strict";
-
 /**
  * This submodule is meant to generate a callback only when all functions provided finished their execution.
  * This is achieved by passing a callback as parameter to the functions that are executed.
  *
  * @param  {Object}    functions     Object with named functions (key-value pairs) that should be executed and synced.
  * @param  {Function} finalCallback Callback that is called when all functions finished their job. It also gets a parameter which aggregates data from all functions.
+ * @return {undefined}
  */
 function parallel (functions, finalCallback) {
-	var key;
+	let key;
 
-	var done = false;
-	var dataAggregate = {};
+	let done = false;
+	const dataAggregate = {};
 
-	var status = {};
+	const status = {};
 
 	for (key in functions) {
 		if (functions.hasOwnProperty(key)) {
@@ -21,8 +20,8 @@ function parallel (functions, finalCallback) {
 		}
 	}
 
-	var verify = function () {
-		var statusKey;
+	const verify = function () {
+		let statusKey;
 
 		for (statusKey in status) {
 			if (status.hasOwnProperty(statusKey)) {
@@ -38,8 +37,8 @@ function parallel (functions, finalCallback) {
 	};
 
 
-	var callTheFunction = function (_key) {
-		var thisCallbackDone = function (err, data) {
+	const callTheFunction = function (_key) {
+		const thisCallbackDone = function (err, data) {
 			if (!done) {
 				if (err) {
 					done = true;
@@ -62,7 +61,7 @@ function parallel (functions, finalCallback) {
 			functions[_key](thisCallbackDone);
 		} else if (typeof functions[_key] === 'object' && typeof functions[_key].func === 'function') {
 			if (functions[_key].hasOwnProperty('args')) {
-				var args = functions[_key].args;
+				const args = functions[_key].args;
 				args.splice(0, 1, thisCallbackDone);
 
 				functions[_key].func.apply(this, args);
