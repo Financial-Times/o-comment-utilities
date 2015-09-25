@@ -1,4 +1,5 @@
-# Introduction
+# o-comment-utilities [![Build Status](https://travis-ci.org/Financial-Times/o-comment-utilities.svg?branch=master)](https://travis-ci.org/Financial-Times/o-comment-utilities)
+
 A collection of helper functions used by o-comments and o-chat.
 
 ## Contents
