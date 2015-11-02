@@ -13,7 +13,12 @@ function isLoggedIn () {
  * @return {String} Session ID
  */
 function getSession () {
-	return isLoggedIn() ? cookie.get('FTSession') : null;
+	const session = cookie.get('FTSession');
+	if (session) {
+		return session;
+	} else {
+		return null;
+	}
 }
 
 /**
