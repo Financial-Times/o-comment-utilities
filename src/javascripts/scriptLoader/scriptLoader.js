@@ -92,7 +92,7 @@ function scriptLoader (options, callback) {
 			destroy();
 
 			if (isAbort) {
-				error();
+				error(new Error("Aborted."));
 				return;
 			}
 
@@ -100,9 +100,9 @@ function scriptLoader (options, callback) {
 		}
 	};
 
-	script.onerror = function (e) {
+	script.onerror = function () {
 		destroy();
-		error(e);
+		error(new Error("Error loading script."));
 	};
 
 	head.insertBefore( script, head.firstChild );
