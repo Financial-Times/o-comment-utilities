@@ -15,7 +15,8 @@ exports.dateHelper = require('./src/javascripts/date/dateHelper.js');
 exports.merge = require('./src/javascripts/merge/merge.js');
 exports.dom = {
 	ScrollMonitor: require('./src/javascripts/dom/ScrollMonitor.js'),
-	offset: require('./src/javascripts/dom/offset.js')
+	offset: require('./src/javascripts/dom/offset.js'),
+	windowSize: require('./src/javascripts/dom/windowSize.js')
 };
 exports.cookie = require('./src/javascripts/cookie/cookie.js');
 exports.ftUser = require('./src/javascripts/user/ftUser.js');
