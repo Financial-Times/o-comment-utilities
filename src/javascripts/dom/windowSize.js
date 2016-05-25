@@ -3,8 +3,8 @@ module.exports = function () {
 	const d = document;
 	const e = d.documentElement;
 	const g = d.getElementsByTagName('body')[0];
-	const x = w.outerWidth || g.clientWidth || e.clientWidth;
-	const y = w.outerHeight || g.clientHeight || e.clientHeight;
+	const x = w.innerWidth || g.clientWidth || e.clientWidth;
+	const y = w.innerHeight || g.clientHeight || e.clientHeight;
 
 	return {
 		width: x,
