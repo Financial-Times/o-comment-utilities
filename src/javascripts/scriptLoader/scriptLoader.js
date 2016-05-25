@@ -100,9 +100,9 @@ function scriptLoader (options, callback) {
 		}
 	};
 
-	script.onerror = function (err) {
+	script.onerror = function () {
 		destroy();
-		error(err);
+		error(new Error("Error loading script."));
 	};
 
 	head.insertBefore( script, head.firstChild );
