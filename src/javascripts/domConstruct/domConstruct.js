@@ -51,11 +51,17 @@ module.exports = function (config) {
 
 
 			function getAttributeValue (valueRead) {
-				const intValue = parseInt(valueRead, 10);
-				if (!isNaN(valueRead) && intValue) {
-					return intValue;
+				if (valueRead === "true") {
+					return true;
+				} else if (valueRead === "false") {
+					return false;
 				} else {
-					return valueRead;
+					const intValue = parseInt(valueRead, 10);
+					if (!isNaN(valueRead) && intValue) {
+						return intValue;
+					} else {
+						return valueRead;
+					}
 				}
 			}
 
