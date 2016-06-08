@@ -49,6 +49,16 @@ module.exports = function (config) {
 			let currentLevel;
 			let camelCaseConfigName;
 
+
+			function getAttributeValue (valueRead) {
+				const value = parseInt(valueRead, 10);
+				if (value) {
+					return value;
+				} else {
+					return valueRead;
+				}
+			}
+
 			for (let j = 0; j < item.attributes.length; j++) {
 				match = item.attributes[j].name.match(new RegExp('data-' + config.classNamespace + '-config-(.*)'));
 				if (match && match.length) {
@@ -59,7 +69,7 @@ module.exports = function (config) {
 						camelCaseConfigName = getCamelCaseName(itemsInConfig[k]);
 						if (k === itemsInConfig.length - 1) {
 							// last level
-							currentLevel[camelCaseConfigName] = item.attributes[j].value;
+							currentLevel[camelCaseConfigName] = getAttributeValue(item.attributes[j].value);
 						} else {
 							// there's one more level
 							if (!currentLevel[camelCaseConfigName]) {
