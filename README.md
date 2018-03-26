@@ -149,7 +149,7 @@ Where:
 
 
 ### <div id="jsonp"></div> jsonp
-This module provides a similar solution for JSONP communication as jQuery. For more information on JSONP, visit http://json-p.org/ .
+This module provides a similar solution for JSONP communication as jQuery. For more information on JSONP, visit https://www.w3schools.com/js/js_json_jsonp.asp .
 
 The module is actually a single function. It should be called the following way:
 
