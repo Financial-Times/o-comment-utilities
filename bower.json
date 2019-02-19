@@ -5,7 +5,7 @@
 	},
 	"ignore": [
 		"node_modules",
-		"tests",
+		"test",
 		"gulpfile.js",
 		"docs",
 		".editorconfig",
