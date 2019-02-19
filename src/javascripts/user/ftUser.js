@@ -5,7 +5,7 @@ const cookie = require('../cookie/cookie.js');
  * @return {Boolean} If the user is logged in or not
  */
 function isLoggedIn () {
-	return !!getSession();
+	return Boolean(getSession());
 }
 
 /**

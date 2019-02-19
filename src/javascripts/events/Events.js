@@ -36,13 +36,10 @@ function Events () {
 			if (action) {
 				actionInProgress[evt] = true;
 
-				switch (action.type) {
-					case 'off':
-						off.apply(self, action.args);
-						break;
-					case 'trigger':
-						trigger.apply(self, action.args);
-						break;
+				if (action.type === 'off') {
+					off.apply(self, action.args);
+				} else if (action.type === 'trigger') {
+					trigger.apply(self, action.args);
 				}
 
 				actionInProgress[evt] = false;
@@ -117,9 +114,9 @@ function Events () {
 	 * @return {undefined}
 	 */
 	const off = function (evt, handler) {
-		const handlerNotSet = (typeof handler === 'undefined');
-		const eventCorrect = (typeof evt === 'string');
-		const handlerCorrect = (typeof handler === 'function');
+		const handlerNotSet = typeof handler === 'undefined';
+		const eventCorrect = typeof evt === 'string';
+		const handlerCorrect = typeof handler === 'function';
 
 		if (eventCorrect) {
 			if (events[evt]) {
@@ -143,10 +140,10 @@ function Events () {
 	 * @return {undefined}
 	 */
 	this.off = function (evt, handler) {
-		const eventNotSet = (typeof evt === 'undefined');
-		const handlerNotSet = (typeof handler === 'undefined');
-		const eventCorrect = (typeof evt === 'string');
-		const handlerCorrect = (typeof handler === 'function');
+		const eventNotSet = typeof evt === 'undefined';
+		const handlerNotSet = typeof handler === 'undefined';
+		const eventCorrect = typeof evt === 'string';
+		const handlerCorrect = typeof handler === 'function';
 
 		if (eventNotSet) {
 			for (const evtKey in events) {

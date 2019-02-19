@@ -79,6 +79,6 @@ function ScrollMonitor (el, callback) {
 		i = null;
 	};
 
-	this.start.call(this);
+	this.start();
 }
 module.exports = ScrollMonitor;

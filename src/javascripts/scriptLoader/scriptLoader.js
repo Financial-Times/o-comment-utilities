@@ -22,7 +22,7 @@ function scriptLoader (options, callback) {
 	 * Parameter validation.
 	 */
 	if (typeof callback !== 'function') {
-		throw "Callback not specified";
+		throw Error("Callback not specified");
 	}
 
 	if (typeof options === 'string') {
