@@ -6,13 +6,13 @@
 function param (data) {
 	const dataArr = [];
 	const add = function( key, value ) {
-			value = (typeof value === 'function') ? value() : ( value === null ? "" : value );
+		value = typeof value === 'function' ? value() : value === null ? "" : value ;
 
-			dataArr[dataArr.length] = encodeURIComponent( key ) + "=" + encodeURIComponent( value );
-		};
+		dataArr[dataArr.length] = encodeURIComponent( key ) + "=" + encodeURIComponent( value );
+	};
 
 	if (typeof data !== 'object') {
-		throw "The argument is not an object.";
+		throw new Error("The argument is not an object.");
 	}
 
 	for (const key in data) {

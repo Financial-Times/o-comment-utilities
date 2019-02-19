@@ -51,7 +51,7 @@ const date = {
 	 * @return {String} Date in ISO format.
 	 */
 	toISOString: function (timestampOrDate) {
-			const dateObj = date.toDateObject(timestampOrDate);
+		const dateObj = date.toDateObject(timestampOrDate);
 
 		if (dateObj.hasOwnProperty('toISOString')) {
 			return dateObj.toISOString();

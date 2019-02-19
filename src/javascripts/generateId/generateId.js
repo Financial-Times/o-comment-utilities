@@ -4,7 +4,7 @@ const generateId = function () {
 	const length = (Math.random() + 1) * 10;
 
 	for( let i=0; i < length; i++ )
-		text += possible.charAt(Math.floor(Math.random() * possible.length));
+	{text += possible.charAt(Math.floor(Math.random() * possible.length));}
 
 	return text;
 };

@@ -21,7 +21,7 @@ function jsonp (options, callback) {
 	 * Parameter validation.
 	 */
 	if (typeof callback !== 'function') {
-		throw "Callback not specified";
+		throw new Error("Callback not specified");
 	}
 
 	if (typeof options !== 'object') {

@@ -33,7 +33,7 @@ if (storageOk) {
 		} else if (type === 'session' || type === 'sessionStorage') {
 			storageObj = sessionStorage;
 		} else {
-			throw "Not valid storage type selected";
+			throw new TypeError("Not valid storage type selected");
 		}
 
 		/**
@@ -80,7 +80,7 @@ if (storageOk) {
 					type = "unknown";
 					realValue = value;
 			}
-			realValue = ((typeof type !== "undefined") ? type : (typeof value)) + "|" + realValue;
+			realValue = (typeof type !== "undefined" ? type : typeof value) + "|" + realValue;
 
 			storageObj.setItem(key, realValue);
 		};
@@ -134,7 +134,7 @@ if (storageOk) {
 		 * @return {Boolean} If it has the item or not.
 		 */
 		this.hasItem = function (key) {
-			return !!storageObj.getItem(key);
+			return Boolean(storageObj.getItem(key));
 		};
 
 		/**

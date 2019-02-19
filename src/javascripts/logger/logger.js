@@ -156,20 +156,20 @@ exports.setLevel = function (level) {
 			if (levelIndex(level) !== -1) {
 				minLevel = levelIndex(level);
 			} else {
-				throw "Level not exists";
+				throw new Error("Level not exists");
 			}
 		} else {
 			if (level >= 0 && level <= levels.length-1) {
 				minLevel = level;
 			} else {
-				throw "Level out of range.";
+				throw new Error("Level out of range.");
 			}
 		}
 	} else if (typeof level === 'number') {
 		if (level >= 0 && level <= levels.length-1) {
 			minLevel = level;
 		} else {
-			throw "Level out of range.";
+			throw new Error("Level out of range.");
 		}
 	}
 };
